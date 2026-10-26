@@ -1,0 +1,55 @@
+appId: com.smartpos.smart_pos
+---
+# ==============================================================================
+# Test Case: ACC-01
+# Modul: Akun & Logout Kasir
+# Deskripsi: Verifikasi profil kasir dan proses logout dari aplikasi
+# Langkah:
+#   1. Buka menu Akun di Navbar
+#   2. Verifikasi profil kasir dan ringkasan sesi operasional
+#   3. Klik tombol 'Keluar dari Akun (Logout)'
+#   4. Konfirmasi logout pada dialog
+# Hasil Diharapkan:
+#   Sesi kasir berakhir dan aplikasi kembali ke layar Login ('Masuk ke Smart POS').
+# ==============================================================================
+
+# Pastikan aplikasi aktif dan sudah login
+- runFlow: ../common/ensure_logged_in.yaml
+
+# 1. Buka menu Akun
+- tapOn: "Akun"
+
+- extendedWaitUntil:
+    visible: "Akun & Profil Kasir"
+    timeout: 5000
+
+# 2. Verifikasi profil kasir dan ringkasan sesi operasional
+- assertVisible: "Ringkasan Sesi Operasional"
+- assertVisible: "Versi Aplikasi"
+
+# 3. Scroll ke tombol logout jika diperlukan
+- scrollUntilVisible:
+    element:
+      text: "Keluar dari Akun (Logout)"
+    direction: DOWN
+
+# 4. Klik tombol 'Keluar dari Akun (Logout)'
+- tapOn: "Keluar dari Akun (Logout)"
+
+# 5. Verifikasi dialog konfirmasi logout muncul
+- extendedWaitUntil:
+    visible: "Keluar Akun Kasir?"
+    timeout: 4000
+
+- assertVisible: "Batal"
+- assertVisible: "Ya, Keluar"
+
+# 6. Konfirmasi keluar akun
+- tapOn: "Ya, Keluar"
+
+# 7. Verifikasi sesi berakhir dan kembali ke layar login
+- extendedWaitUntil:
+    visible: "Masuk ke Smart POS"
+    timeout: 8000
+
+- assertVisible: "Masuk Sekarang"

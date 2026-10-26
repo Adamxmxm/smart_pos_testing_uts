@@ -1,0 +1,58 @@
+appId: com.smartpos.smart_pos
+---
+# ==============================================================================
+# UAT Test Case: PRT-02
+# Modul: Reprint Struk
+# Deskripsi: Cetak ulang struk dari riwayat transaksi
+# Langkah:
+#   1. Masuk ke menu Laporan
+#   2. Scroll ke bagian 'Riwayat Transaksi Penjualan'
+#   3. Pilih salah satu transaksi lalu klik icon printer ('Cetak Struk Ulang')
+#   4. Pada dialog Nota Transaksi yang terbuka, klik 'Cetak Nota'
+# Hasil Diharapkan:
+#   Printer mencetak ulang struk transaksi terkait.
+# ==============================================================================
+
+# Pastikan aplikasi aktif dan sudah login
+- runFlow: ../common/ensure_logged_in.yaml
+
+# 1. Navigasi ke menu Laporan
+- tapOn: "Laporan"
+
+- extendedWaitUntil:
+    visible: "Riwayat Transaksi Penjualan"
+    timeout: 5000
+
+# 2. Scroll ke daftar transaksi
+- scrollUntilVisible:
+    element:
+      text: "COMPLETED"
+    direction: DOWN
+
+# 3. Klik tombol / icon Cetak Struk Ulang pada transaksi
+- tapOn:
+    id: ".*print.*"
+    optional: true
+
+- runFlow:
+    when:
+      notVisible: "Nota Transaksi"
+    commands:
+      # Tap icon print di sebelah kanan baris transaksi pertama
+      - tapOn:
+          point: "92%,65%"
+          optional: true
+
+# 4. Verifikasi dialog 'Nota Transaksi' terbuka
+- extendedWaitUntil:
+    visible: "Nota Transaksi"
+    timeout: 5000
+
+- assertVisible: "Cetak Nota"
+- assertVisible: "Selesai"
+
+# 5. Klik tombol 'Cetak Nota' untuk mencetak ulang
+- tapOn: "Cetak Nota"
+
+# 6. Tutup dialog nota
+- tapOn: "Selesai"

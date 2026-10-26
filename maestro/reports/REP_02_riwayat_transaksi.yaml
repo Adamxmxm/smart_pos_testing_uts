@@ -1,0 +1,43 @@
+appId: com.smartpos.smart_pos
+---
+# ==============================================================================
+# UAT Test Case: REP-02
+# Modul: Riwayat Transaksi
+# Deskripsi: Melihat riwayat dan detail transaksi
+# Langkah:
+#   1. Buka menu Laporan di Navbar
+#   2. Scroll ke bagian 'Riwayat Transaksi Penjualan'
+#   3. Amati daftar transaksi (nomor invoice, tanggal, total, kasir, status)
+# Hasil Diharapkan:
+#   Menampilkan detail transaksi belanja dengan akurat.
+# ==============================================================================
+
+# Pastikan aplikasi aktif dan sudah login
+- runFlow: ../common/ensure_logged_in.yaml
+
+# 1. Buka menu Laporan
+- tapOn: "Laporan"
+
+- extendedWaitUntil:
+    visible: "Riwayat Transaksi Penjualan"
+    timeout: 5000
+
+# 2. Scroll ke bawah menuju tabel riwayat transaksi
+- scrollUntilVisible:
+    element:
+      text: "Riwayat Transaksi Penjualan"
+    direction: DOWN
+
+# 3. Verifikasi riwayat transaksi tampil atau status kosong jika belum ada
+- runFlow:
+    when:
+      visible: "COMPLETED"
+    commands:
+      - assertVisible: "COMPLETED"
+      - assertVisible: "TUNAI|NON_TUNAI"
+
+- runFlow:
+    when:
+      visible: "Belum ada transaksi pada periode ini"
+    commands:
+      - assertVisible: "Belum ada transaksi pada periode ini"

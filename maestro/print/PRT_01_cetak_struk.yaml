@@ -1,0 +1,42 @@
+appId: com.smartpos.smart_pos
+---
+# ==============================================================================
+# UAT Test Case: PRT-01
+# Modul: Cetak Struk
+# Deskripsi: Cetak struk fisik via printer thermal Bluetooth ESC/POS
+# Langkah:
+#   1. Selesaikan transaksi hingga dialog 'Nota Transaksi' muncul
+#   2. Pilih opsi ukuran kertas struk (58mm / 80mm)
+#   3. Klik 'Cetak Nota'
+# Hasil Diharapkan:
+#   Printer mencetak struk berisi Toko, Item, Total, Metode Bayar, & Kembalian.
+#   Format ESC/POS rapi & terbaca.
+# ==============================================================================
+
+# Pastikan aplikasi aktif dan selesaikan satu transaksi cepat
+- runFlow: ../payment/PAY_01_pembayaran_tunai.yaml
+
+# 1. Buka kembali struk jika belum di layar nota, atau lakukan verifikasi langsung pada dialog Nota Transaksi
+# Catatan: PAY_01 di atas menyelesaikan transaksi dan membuka dialog 'Nota Transaksi'
+# Jika dialog telah terbuka:
+- extendedWaitUntil:
+    visible: "Nota Transaksi"
+    optional: true
+    timeout: 5000
+
+# 2. Verifikasi komponen preview struk
+- assertVisible: "Ukuran Kertas:"
+- assertVisible: "58mm"
+- assertVisible: "80mm"
+
+# 3. Ganti ukuran kertas ke 80mm
+- tapOn: "80mm"
+
+# 4. Ganti kembali ukuran kertas ke 58mm
+- tapOn: "58mm"
+
+# 5. Klik tombol 'Cetak Nota'
+- tapOn: "Cetak Nota"
+
+# 6. Verifikasi tombol 'Selesai' dan tutup dialog nota
+- tapOn: "Selesai"

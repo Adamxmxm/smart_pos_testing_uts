@@ -1,0 +1,60 @@
+appId: com.smartpos.smart_pos
+---
+# ==============================================================================
+# UAT Test Case: POS-04
+# Modul: Open Nota (Retrieve)
+# Deskripsi: Memanggil kembali nota terbuka ke keranjang
+# Langkah:
+#   1. Buka daftar 'Open Nota' (klik tombol/icon Open Nota di AppBar atau CartPanel)
+#   2. Pilih salah satu nota aktif
+#   3. Klik tombol 'Muat Nota'
+# Hasil Diharapkan:
+#   Item dan detail nota dimuat kembali ke keranjang untuk dilanjutkan ke pembayaran.
+# ==============================================================================
+
+# Pastikan aplikasi aktif dan di halaman POS
+- runFlow: ../common/ensure_logged_in.yaml
+- tapOn: "POS"
+
+# 1. Buka dialog Daftar Open Nota
+# Coba klik tombol Open Nota pada AppBar atau CartPanel
+- tapOn:
+    text: "Open Nota.*"
+    optional: true
+
+- runFlow:
+    when:
+      notVisible: "Daftar Open Nota"
+    commands:
+      # Tap icon Open Nota pada AppBar
+      - tapOn:
+          point: "75%,5%"
+
+# 2. Verifikasi dialog Daftar Open Nota terbuka
+- extendedWaitUntil:
+    visible: "Daftar Open Nota"
+    timeout: 5000
+
+# 3. Klik tombol 'Muat Nota' pada salah satu nota aktif
+- tapOn: "Muat Nota"
+
+# 4. Verifikasi nota termuat kembali ke keranjang
+- runFlow:
+    when:
+      notVisible: "Total Tagihan"
+    commands:
+      - tapOn:
+          text: ".*Item • Rp.*"
+          optional: true
+      - tapOn:
+          point: "85%,5%"
+          optional: true
+
+# Verifikasi banner nota aktif dan tombol pembayaran siap
+- extendedWaitUntil:
+    visible: "Keranjang"
+    timeout: 5000
+
+- assertVisible: "Memuat Nota:.*|Total Tagihan"
+- assertVisible: "Bayar Tunai"
+- assertVisible: "Non-Tunai"

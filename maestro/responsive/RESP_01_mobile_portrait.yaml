@@ -1,0 +1,52 @@
+appId: com.smartpos.smart_pos
+---
+# ==============================================================================
+# UAT Test Case: RESP-01
+# Modul: Responsive UI
+# Deskripsi: Tampilan layout pada smartphone (Mobile Portrait)
+# Langkah:
+#   1. Buka aplikasi di smartphone/mode portrait
+#   2. Amati susunan layout
+# Hasil Diharapkan:
+#   Tampilan single-column, keranjang belanja muncul sebagai expandable bottom sheet.
+# ==============================================================================
+
+# Pastikan aplikasi aktif dan sudah login
+- runFlow: ../common/ensure_logged_in.yaml
+
+# 1. Verifikasi susunan UI Smartphone Portrait
+# Bottom navigation bar harus tampak di bawah
+- assertVisible: "POS"
+- assertVisible: "Produk"
+- assertVisible: "Laporan"
+- assertVisible: "Akun"
+
+# Katalog produk single-column / 2-column mobile grid
+- assertVisible: "Cari produk atau menu..."
+- assertVisible: "Semua"
+
+# 2. Buka keranjang belanja mobile via tombol keranjang di AppBar
+- tapOn:
+    id: ".*" # Icon keranjang
+    text: "Keranjang.*"
+    optional: true
+
+# Alternatif: tap langsung jika bottom sheet / panel keranjang dibuka
+- runFlow:
+    when:
+      notVisible: "Total Tagihan"
+    commands:
+      # Tap icon keranjang belanja pada AppBar
+      - tapOn:
+          point: "85%,5%" # Lokasi tombol action keranjang di AppBar mobile
+
+# 3. Verifikasi Expandable Bottom Sheet Keranjang Belanja tampil
+- extendedWaitUntil:
+    visible: "Keranjang"
+    timeout: 5000
+
+- assertVisible: "Total Tagihan"
+- assertVisible: "Simpan Tagihan (Open Nota)"
+
+# 4. Tutup kembali bottom sheet keranjang belanja
+- back

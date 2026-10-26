@@ -1,0 +1,44 @@
+appId: com.smartpos.smart_pos
+---
+# ==============================================================================
+# UAT Test Case: REP-01
+# Modul: Laporan Penjualan
+# Deskripsi: Ringkasan penjualan harian/bulanan
+# Langkah:
+#   1. Buka menu Laporan di Navbar
+#   2. Cek Total Omset, Total Transaksi, dan Rata-rata Keranjang (KPI Cards)
+#   3. Ganti filter periode: 'Minggu Ini', 'Bulan Ini', 'Semua Waktu', 'Hari Ini'
+# Hasil Diharapkan:
+#   Angka statistik dan KPI dashboard teragregasi secara akurat sesuai periode.
+# ==============================================================================
+
+# Pastikan aplikasi aktif dan sudah login
+- runFlow: ../common/ensure_logged_in.yaml
+
+# 1. Buka menu Laporan
+- tapOn: "Laporan"
+
+- extendedWaitUntil:
+    visible: "Laporan Penjualan|Laporan & Analitik Penjualan"
+    timeout: 5000
+
+# 2. Verifikasi 3 KPI Cards Utama Penjualan
+- assertVisible: "Total Omset Penjualan"
+- assertVisible: "Total Transaksi"
+- assertVisible: "Rata-rata Keranjang (AOV)"
+
+# 3. Uji interaksi Filter Periode Waktu
+- tapOn: "Minggu Ini"
+- assertVisible: "Total Omset Penjualan"
+
+- tapOn: "Bulan Ini"
+- assertVisible: "Total Omset Penjualan"
+
+- tapOn: "Semua Waktu"
+- assertVisible: "Total Omset Penjualan"
+
+- tapOn: "Hari Ini"
+- assertVisible: "Total Omset Penjualan"
+
+# 4. Verifikasi tombol Export laporan tersedia
+- assertVisible: "Export.*|Export PDF|Export Excel"
