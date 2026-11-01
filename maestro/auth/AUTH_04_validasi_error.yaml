@@ -1,0 +1,78 @@
+appId: com.smartpos.smart_pos
+---
+# ==============================================================================
+# UAT Test Case: AUTH-04 / ERR-01
+# Modul: Validasi Kesalahan (Error Validation)
+# Deskripsi: Validasi form login pada input kosong, format email salah, dan password pendek
+# Langkah:
+#   1. Buka aplikasi pada halaman login
+#   2. Klik 'Masuk Sekarang' tanpa mengisi formulir (Validasi Field Kosong)
+#   3. Masukkan format email salah tanpa '@' (Validasi Format Email)
+#   4. Masukkan password kurang dari 6 karakter (Validasi Panjang Password)
+#   5. Masukkan kredensial yang salah / tidak terdaftar (Validasi Kredensial Salah)
+# Hasil Diharapkan:
+#   Muncul pesan validasi/error yang sesuai pada setiap kondisi kesalahan.
+# ==============================================================================
+
+# 1. Buka aplikasi POS
+- launchApp:
+    clearState: false
+
+- extendedWaitUntil:
+    visible: "Masuk ke Smart POS"
+    timeout: 8000
+
+# 2. Skenario Kesalahan 1: Klik Masuk dengan Field Kosong
+- tapOn: "Masuk Sekarang"
+
+# Assertion validasi field kosong
+- assertVisible: "Email wajib diisi"
+- assertVisible: "Password wajib diisi"
+- takeScreenshot: "maestro/screenshots/04_error_field_kosong.png"
+
+# 3. Skenario Kesalahan 2: Format Email Tidak Valid
+- tapOn:
+    text: "nama@domain.com"
+- inputText: "kasirinvalidformat"
+- hideKeyboard
+
+- tapOn: "Masuk Sekarang"
+
+# Assertion validasi format email
+- assertVisible: "Format email tidak valid"
+- takeScreenshot: "maestro/screenshots/04_error_format_email.png"
+
+# 4. Skenario Kesalahan 3: Password Kurang dari 6 Karakter
+- tapOn:
+    text: "••••••••"
+- inputText: "123"
+- hideKeyboard
+
+- tapOn: "Masuk Sekarang"
+
+# Assertion validasi panjang password
+- assertVisible: "Password minimal 6 karakter"
+- takeScreenshot: "maestro/screenshots/04_error_password_pendek.png"
+
+# 5. Skenario Kesalahan 4: Kredensial Salah (Email/Password Tidak Terdaftar)
+- tapOn:
+    text: "kasirinvalidformat"
+- eraseText: 50
+- inputText: "akun.palsu@pos.com"
+- hideKeyboard
+
+- tapOn:
+    text: "••••••••"
+- eraseText: 50
+- inputText: "passwordsalah123"
+- hideKeyboard
+
+- tapOn: "Masuk Sekarang"
+
+# Assertion SnackBar login gagal
+- extendedWaitUntil:
+    visible: ".*salah.*|.*gagal.*|.*Login gagal.*"
+    timeout: 8000
+- assertVisible: ".*salah.*|.*gagal.*|.*Login gagal.*"
+- takeScreenshot: "maestro/screenshots/04_error_kredensial_salah.png"
+

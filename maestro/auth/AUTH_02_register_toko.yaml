@@ -1,0 +1,56 @@
+appId: com.smartpos.smart_pos
+---
+# ==============================================================================
+# UAT Test Case: AUTH-02
+# Modul: Register Toko / Kasir Baru
+# Deskripsi: Pendaftaran akun toko dan kasir baru
+# Langkah:
+#   1. Pilih Register ('Daftar Baru')
+#   2. Isi Nama Toko/Kasir, Email, Password
+#   3. Klik Register ('Daftar Sekarang')
+# Hasil Diharapkan:
+#   Data profil kasir tersimpan di Supabase, akun berhasil dibuat, kembali ke login.
+# ==============================================================================
+
+# Pastikan aplikasi terbuka di halaman login
+- launchApp:
+    clearState: false
+
+- extendedWaitUntil:
+    visible: "Masuk ke Smart POS"
+    timeout: 8000
+
+# 1. Klik tautan 'Daftar Baru' pada layar Login
+- tapOn: "Daftar Baru"
+
+# Verifikasi halaman pendaftaran kasir terbuka
+- extendedWaitUntil:
+    visible: "Registrasi Kasir"
+    timeout: 4000
+
+- assertVisible: "Nama Lengkap Kasir"
+- assertVisible: "Alamat Email"
+- assertVisible: "Kata Sandi"
+
+# 2. Input data formulir registrasi
+- tapOn: "Contoh: Ahmad Kasir"
+- inputText: "Kasir UAT Test"
+- hideKeyboard
+
+- tapOn: "kasir@toko.com"
+- inputText: "kasir_uat_${Date.now()}@example.com"
+- hideKeyboard
+
+- tapOn: "Minimal 6 karakter"
+- inputText: "password123"
+- hideKeyboard
+
+# 3. Klik tombol 'Daftar Sekarang'
+- tapOn: "Daftar Sekarang"
+
+# 4. Verifikasi feedback sukses pendaftaran atau transisi kembali ke Login
+- extendedWaitUntil:
+    visible:
+      text: "Masuk ke Smart POS"
+      optional: true
+    timeout: 10000

@@ -1,0 +1,50 @@
+appId: com.smartpos.smart_pos
+---
+# ==============================================================================
+# UAT Test Case: NAV-01
+# Modul: Navigation Bar
+# Deskripsi: Navigasi antar modul utama aplikasi
+# Langkah:
+#   1. Klik menu Produk di Navbar
+#   2. Klik menu Laporan di Navbar
+#   3. Klik menu Akun di Navbar
+#   4. Klik menu POS di Navbar
+# Hasil Diharapkan:
+#   Layar berpindah sesuai menu yang dipilih tanpa lag.
+# ==============================================================================
+
+# Pastikan aplikasi aktif dan sudah login
+- runFlow: ../common/ensure_logged_in.yaml
+
+# 1. Navigasi ke menu Produk
+- tapOn: "Produk"
+- extendedWaitUntil:
+    visible: "Produk & Stok|Manajemen Produk & Stok"
+    timeout: 5000
+- assertVisible: "Tambah|Tambah Produk"
+
+# 2. Navigasi ke menu Laporan
+- tapOn: "Laporan"
+- extendedWaitUntil:
+    visible: "Laporan Penjualan|Laporan & Analitik Penjualan"
+    timeout: 5000
+- assertVisible: "Total Omset Penjualan"
+- assertVisible: "Total Transaksi"
+
+# 3. Navigasi ke menu Akun
+- tapOn: "Akun"
+- extendedWaitUntil:
+    visible: "Akun & Profil Kasir"
+    timeout: 5000
+- assertVisible: "Ringkasan Sesi Operasional"
+- assertVisible: "Keluar dari Akun (Logout)"
+
+# 4. Navigasi kembali ke menu POS
+- tapOn: "POS"
+- extendedWaitUntil:
+    visible: "Cari produk atau menu..."
+    timeout: 5000
+- assertVisible: "Semua"
+
+# 5. Dokumentasi hasil eksekusi (Screenshot bukti pengujian navigasi)
+- takeScreenshot: "maestro/screenshots/02_navigation_pos.png"
