@@ -1,0 +1,72 @@
+appId: com.smartpos.smart_pos
+---
+# ==============================================================================
+# MASTER TEST SUITE: SMART POS - COMPLETE UAT AUTOMATION
+# File Excel Acuan: UAT_Interactive_Smart_POS_App.xlsx
+# ==============================================================================
+
+# ----------------- MODUL 1: AUTENTIKASI & VALIDASI -----------------
+- echo: "=== Menjalankan AUTH-01: Splash Screen ==="
+- runFlow: auth/AUTH_01_splash_screen.yaml
+
+- echo: "=== Menjalankan AUTH-04: Validasi Kesalahan Form & Kredensial ==="
+- runFlow: auth/AUTH_04_validasi_error.yaml
+
+- echo: "=== Menjalankan AUTH-03: Login Kasir ==="
+- runFlow: auth/AUTH_03_login_kasir.yaml
+
+# ----------------- MODUL 2: NAVIGASI & RESPONSIVE -----------------
+- echo: "=== Menjalankan NAV-01: Navigation Bar ==="
+- runFlow: navigation/NAV_01_navigation_bar.yaml
+
+- echo: "=== Menjalankan RESP-01: Mobile Portrait ==="
+- runFlow: responsive/RESP_01_mobile_portrait.yaml
+
+- echo: "=== Menjalankan RESP-02: Tablet Landscape Split-Screen ==="
+- runFlow: responsive/RESP_02_tablet_landscape.yaml
+
+# ----------------- MODUL 3: POS & TRANSAKSI -----------------
+- echo: "=== Menjalankan POS-01: Katalog & Filter ==="
+- runFlow: pos/POS_01_katalog_filter.yaml
+
+- echo: "=== Menjalankan POS-02: Keranjang Belanja ==="
+- runFlow: pos/POS_02_keranjang_belanja.yaml
+
+- echo: "=== Menjalankan POS-03: Open Nota (Hold) ==="
+- runFlow: pos/POS_03_open_nota_hold.yaml
+
+- echo: "=== Menjalankan POS-04: Open Nota (Retrieve) ==="
+- runFlow: pos/POS_04_open_nota_retrieve.yaml
+
+# ----------------- MODUL 4: PEMBAYARAN & STRUK -----------------
+- echo: "=== Menjalankan PAY-01: Pembayaran Tunai ==="
+- runFlow: payment/PAY_01_pembayaran_tunai.yaml
+
+- echo: "=== Menjalankan PAY-02: Pembayaran Non-Tunai ==="
+- runFlow: payment/PAY_02_pembayaran_non_tunai.yaml
+
+- echo: "=== Menjalankan PRT-01: Cetak Struk ESC/POS ==="
+- runFlow: print/PRT_01_cetak_struk.yaml
+
+- echo: "=== Menjalankan PRT-02: Reprint Struk ==="
+- runFlow: print/PRT_02_reprint_struk.yaml
+
+# ----------------- MODUL 5: MANAJEMEN PRODUK -----------------
+- echo: "=== Menjalankan PRD-01: Tambah Produk ==="
+- runFlow: products/PRD_01_tambah_produk.yaml
+
+- echo: "=== Menjalankan PRD-02: Edit & Hapus Produk ==="
+- runFlow: products/PRD_02_edit_hapus_produk.yaml
+
+# ----------------- MODUL 6: LAPORAN & ANALITIK -----------------
+- echo: "=== Menjalankan REP-01: Laporan Penjualan ==="
+- runFlow: reports/REP_01_laporan_penjualan.yaml
+
+- echo: "=== Menjalankan REP-02: Riwayat Transaksi ==="
+- runFlow: reports/REP_02_riwayat_transaksi.yaml
+
+# ----------------- MODUL 7: AKUN & LOGOUT -----------------
+- echo: "=== Menjalankan ACC-01: Logout Kasir ==="
+- runFlow: account/ACC_01_logout_kasir.yaml
+
+- echo: "=== SELURUH UAT SMART POS SELESAI DIJALANKAN DENGAN SUKSES! ==="

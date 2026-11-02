@@ -1,0 +1,36 @@
+appId: com.smartpos.smart_pos
+---
+# ==============================================================================
+# UAT Test Case: RESP-02
+# Modul: Responsive UI
+# Deskripsi: Tampilan layout pada tablet (Landscape Split-Screen)
+# Langkah:
+#   1. Buka aplikasi di tablet / mode landscape (>=600dp)
+#   2. Amati susunan layout split-screen
+# Hasil Diharapkan:
+#   Tampilan split-screen: katalog di kiri (grid), keranjang belanja di kanan (persistent panel).
+# ==============================================================================
+
+# Pastikan aplikasi aktif dan sudah login
+- runFlow: ../common/ensure_logged_in.yaml
+
+# 1. Putar orientasi layar ke Landscape (simulasi tablet / mode layar lebar)
+- setOrientation: LANDSCAPE
+
+# 2. Verifikasi susunan Split-Screen layout:
+# Bagian kiri: Katalog produk & pencarian
+- extendedWaitUntil:
+    visible: "Cari produk atau menu..."
+    timeout: 5000
+
+- assertVisible: "Semua"
+
+# Bagian kanan: Persistent Cart Panel (selalu tampil tanpa perlu buka modal)
+- assertVisible: "Keranjang"
+- assertVisible: "Total Tagihan"
+- assertVisible: "Simpan Tagihan (Open Nota)"
+- assertVisible: "Bayar Tunai"
+- assertVisible: "Non-Tunai"
+
+# 3. Kembalikan orientasi ke PORTRAIT untuk pengujian selanjutnya
+- setOrientation: PORTRAIT

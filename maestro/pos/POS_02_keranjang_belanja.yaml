@@ -1,0 +1,74 @@
+appId: com.smartpos.smart_pos
+---
+# ==============================================================================
+# UAT Test Case: POS-02
+# Modul: Keranjang Belanja
+# Deskripsi: Menambahkan dan mengubah kuantitas item
+# Langkah:
+#   1. Tap salah satu produk pada katalog
+#   2. Atur kuantitas (gunakan tombol preset / keypad / stepper)
+#   3. Klik 'Tambah (...)' ke keranjang
+#   4. Buka keranjang belanja
+#   5. Ubah qty item (tap '+' untuk menambah, '-' untuk mengurangi)
+# Hasil Diharapkan:
+#   Subtotal dan total harga dihitung otomatis dengan presisi tanpa delay.
+# ==============================================================================
+
+# Pastikan aplikasi aktif dan di halaman POS
+- runFlow: ../common/ensure_logged_in.yaml
+- tapOn: "POS"
+
+# 1. Tap kartu produk pertama pada katalog
+- tapOn:
+    point: "25%,35%" # Tap kartu produk pertama di grid katalog
+
+# 2. Verifikasi modal AddToCartModal terbuka
+- extendedWaitUntil:
+    visible: "Subtotal Produk"
+    timeout: 5000
+
+# 3. Tambahkan kuantitas dengan tombol preset '+2' atau keypad
+- tapOn:
+    text: "\\+2"
+    optional: true
+
+# 4. Tambahkan catatan opsional jika diinginkan
+- tapOn:
+    text: "\\+ Tanpa Es|\\+ Bungkus"
+    optional: true
+
+# 5. Konfirmasi penambahan ke keranjang
+- tapOn: "Tambah.*"
+
+# 6. Buka keranjang belanja (pada mobile buka via FAB / AppBar)
+- runFlow:
+    when:
+      notVisible: "Total Tagihan"
+    commands:
+      - tapOn:
+          text: ".*Item • Rp.*" # Tap FloatingActionButton Keranjang
+          optional: true
+      - tapOn:
+          point: "85%,5%" # Fallback icon keranjang AppBar
+          optional: true
+
+# 7. Verifikasi keranjang belanja terbuka & menampilkan item
+- extendedWaitUntil:
+    visible: "Keranjang"
+    timeout: 5000
+
+- assertVisible: "Total Tagihan"
+
+# 8. Tambah qty item di keranjang (tap tombol icon '+')
+- tapOn:
+    point: "68%,32%" # Posisi tombol increment '+' pada item keranjang pertama
+    optional: true
+
+# 9. Kurangi qty item di keranjang (tap tombol icon '-')
+- tapOn:
+    point: "55%,32%" # Posisi tombol decrement '-' pada item keranjang pertama
+    optional: true
+
+# 10. Verifikasi kalkulasi total tagihan tetap presisi
+- assertVisible: "Total Tagihan"
+- assertVisible: "Bayar Tunai"

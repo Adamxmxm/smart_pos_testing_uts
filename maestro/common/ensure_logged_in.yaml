@@ -1,0 +1,35 @@
+appId: com.smartpos.smart_pos
+---
+# ==============================================================================
+# Helper Flow: Ensure Cashier Is Logged In
+# ==============================================================================
+
+- launchApp:
+    clearState: false
+
+# Tunggu Splash Screen selesai (1.8 detik animasi)
+- extendedWaitUntil:
+    visible:
+      text: "Masuk ke Smart POS"
+      optional: true
+    timeout: 8000
+
+# Jika layar login tampil, lakukan proses login
+- runFlow:
+    when:
+      visible: "Masuk ke Smart POS"
+    commands:
+      - tapOn: "nama@domain.com"
+      - inputText: ${EMAIL:-"kasir@smartpos.id"}
+      - hideKeyboard
+
+      - tapOn: "••••••••"
+      - inputText: ${PASSWORD:-"password123"}
+      - hideKeyboard
+
+      - tapOn: "Masuk Sekarang"
+
+# Pastikan berada di halaman utama POS
+- extendedWaitUntil:
+    visible: "POS"
+    timeout: 10000

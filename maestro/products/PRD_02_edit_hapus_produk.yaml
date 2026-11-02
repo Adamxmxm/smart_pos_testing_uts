@@ -1,0 +1,89 @@
+appId: com.smartpos.smart_pos
+---
+# ==============================================================================
+# UAT Test Case: PRD-02
+# Modul: Edit & Hapus Produk
+# Deskripsi: Mengubah data dan menghapus produk
+# Langkah:
+#   1. Pada menu Produk, pilih salah satu produk
+#   2. Klik icon edit (pencil)
+#   3. Ubah harga atau stok pada dialog 'Edit Produk'
+#   4. Klik 'Simpan Perubahan'
+#   5. Klik icon hapus (trash) pada produk
+#   6. Konfirmasi penghapusan pada dialog 'Hapus Produk?'
+# Hasil Diharapkan:
+#   Data ter-update di database Supabase dan produk berhasil dihapus.
+# ==============================================================================
+
+# Pastikan aplikasi aktif dan sudah login
+- runFlow: ../common/ensure_logged_in.yaml
+
+# 1. Navigasi ke menu Produk
+- tapOn: "Produk"
+
+- extendedWaitUntil:
+    visible: "Tambah|Tambah Produk"
+    timeout: 5000
+
+# 2. Klik icon edit pada baris produk pertama
+- tapOn:
+    id: ".*edit.*"
+    optional: true
+
+- runFlow:
+    when:
+      notVisible: "Edit Produk"
+    commands:
+      # Tap posisi icon edit di sebelah kanan baris produk pertama
+      - tapOn:
+          point: "85%,25%"
+
+# 3. Verifikasi dialog 'Edit Produk' terbuka
+- extendedWaitUntil:
+    visible: "Edit Produk"
+    timeout: 5000
+
+# 4. Ubah stok produk
+- tapOn:
+    point: "75%,43%" # Input field stok
+    optional: true
+- eraseText: 5
+- inputText: "99"
+- hideKeyboard
+
+# 5. Klik tombol 'Simpan Perubahan'
+- tapOn: "Simpan Perubahan"
+
+# 6. Tunggu dialog tertutup dan data ter-update
+- extendedWaitUntil:
+    visible: "Tambah|Tambah Produk"
+    timeout: 6000
+
+# 7. Klik icon hapus (trash) pada baris produk
+- tapOn:
+    id: ".*delete.*"
+    optional: true
+
+- runFlow:
+    when:
+      notVisible: "Hapus Produk?"
+    commands:
+      # Tap posisi icon delete di sebelah kanan baris produk
+      - tapOn:
+          point: "94%,25%"
+
+# 8. Verifikasi dialog konfirmasi 'Hapus Produk?' muncul
+- extendedWaitUntil:
+    visible: "Hapus Produk?"
+    timeout: 5000
+
+- assertVisible: "Batal"
+- assertVisible: "Hapus"
+
+# 9. Konfirmasi hapus produk
+- tapOn: "Hapus"
+
+# 10. Verifikasi notifikasi produk telah dihapus
+- extendedWaitUntil:
+    visible: ".*telah dihapus.*|Tambah.*"
+    timeout: 6000

@@ -1,0 +1,14 @@
+appId: com.smartpos.smart_pos
+---
+# ==============================================================================
+# Helper Flow: Launch Smart POS App & Wait for Splash Screen
+# ==============================================================================
+
+- launchApp:
+    clearState: false
+
+- extendedWaitUntil:
+    visible:
+      text: "Masuk ke Smart POS"
+      optional: true
+    timeout: 8000

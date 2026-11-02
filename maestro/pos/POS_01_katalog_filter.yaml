@@ -1,0 +1,46 @@
+appId: com.smartpos.smart_pos
+---
+# ==============================================================================
+# UAT Test Case: POS-01
+# Modul: Katalog & Filter
+# Deskripsi: Filtering kategori dan pencarian produk
+# Langkah:
+#   1. Ketik kata kunci pencarian di search bar ("Cari produk atau menu...")
+#   2. Cek filter real-time
+#   3. Hapus teks pencarian
+#   4. Pilih salah satu tab kategori (misal: Minuman / Makanan Utama / Bakery)
+# Hasil Diharapkan:
+#   Daftar produk terfilter secara instan sesuai kata kunci/kategori.
+# ==============================================================================
+
+# Pastikan aplikasi aktif, sudah login, dan berada di POS
+- runFlow: ../common/ensure_logged_in.yaml
+- tapOn: "POS"
+
+# 1. Ketik kata kunci pada search bar
+- tapOn: "Cari produk atau menu..."
+- inputText: "Kopi"
+- hideKeyboard
+
+# Verifikasi produk terfilter sesuai kata kunci
+- extendedWaitUntil:
+    visible: ".*Kopi.*|.*Coffee.*"
+    timeout: 4000
+
+# 2. Hapus kata kunci pencarian
+- eraseText: 10
+- hideKeyboard
+
+# Alternatif tap clear jika ada
+- tapOn:
+    id: ".*clear.*"
+    optional: true
+
+# 3. Pilih tab kategori produk (misal: Minuman / Makanan Utama)
+- tapOn:
+    text: "Minuman.*|Coffee.*|Makanan.*"
+    optional: true
+
+# 4. Kembalikan filter ke tab 'Semua'
+- tapOn: "Semua"
+- assertVisible: "Semua"
