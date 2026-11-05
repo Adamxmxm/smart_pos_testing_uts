@@ -6,8 +6,12 @@ appId: com.smartpos.smart_pos
 # Deskripsi: Verifikasi profil kasir dan proses logout dari aplikasi
 # ==============================================================================
 
+# Pastikan aplikasi aktif
+- launchApp:
+    clearState: false
+
 # 1. Navigasi ke tab Akun
-- tapOn: "Akun"
+- tapOn: ".*Akun.*"
 
 - extendedWaitUntil:
     visible: "Akun & Profil Kasir|Ringkasan Sesi Operasional"

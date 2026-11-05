@@ -6,12 +6,16 @@ appId: com.smartpos.smart_pos
 # Deskripsi: Alur checkout transaksi kasir pembayaran tunai hingga cetak nota
 # ==============================================================================
 
+# Pastikan aplikasi aktif
+- launchApp:
+    clearState: false
+
 # 1. Pastikan di tab POS
 - runFlow:
     when:
       notVisible: "Cari produk atau menu..."
     commands:
-      - tapOn: "POS"
+      - tapOn: ".*POS.*"
 
 - extendedWaitUntil:
     visible: "Cari produk atau menu...|Semua"

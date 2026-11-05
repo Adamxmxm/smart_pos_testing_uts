@@ -6,8 +6,12 @@ appId: com.smartpos.smart_pos
 # Deskripsi: Menambahkan produk baru ke sistem POS
 # ==============================================================================
 
+# Pastikan aplikasi aktif
+- launchApp:
+    clearState: false
+
 # 1. Pindah ke menu Produk (Tab 2)
-- tapOn: "Produk"
+- tapOn: ".*Produk.*"
 
 - extendedWaitUntil:
     visible: "Tambah|Tambah Produk|Produk & Stok"

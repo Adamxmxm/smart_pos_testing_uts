@@ -6,8 +6,12 @@ appId: com.smartpos.smart_pos
 # Deskripsi: Ringkasan penjualan harian/bulanan
 # ==============================================================================
 
+# Pastikan aplikasi aktif
+- launchApp:
+    clearState: false
+
 # 1. Buka menu Laporan
-- tapOn: "Laporan"
+- tapOn: ".*Laporan.*"
 
 - extendedWaitUntil:
     visible: "Total Omset Penjualan|Total Transaksi"
