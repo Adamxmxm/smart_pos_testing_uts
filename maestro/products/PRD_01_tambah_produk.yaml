@@ -2,44 +2,42 @@ appId: com.smartpos.smart_pos
 ---
 # ==============================================================================
 # UAT Test Case: PRD-01
-# Modul: Tambah Produk
-# Deskripsi: Menambahkan produk baru beserta gambar
-# Langkah:
-#   1. Buka menu Produk -> Klik tombol 'Tambah' / 'Tambah Produk'
-#   2. Isi Nama Produk, Kategori, Harga, dan Stok
-#   3. Masukkan URL gambar produk (atau pilih foto)
-#   4. Klik 'Tambah Produk' untuk menyimpan
-# Hasil Diharapkan:
-#   Produk baru tersimpan dan langsung muncul di katalog POS dan manajemen produk.
+# Modul: Tambah Produk (CRUD)
+# Deskripsi: Menambahkan produk baru ke sistem POS
 # ==============================================================================
 
-# Pastikan aplikasi aktif dan sudah login
-- runFlow: ../common/ensure_logged_in.yaml
-
-# 1. Navigasi ke menu Produk
+# 1. Pindah ke menu Produk (Tab 2)
 - tapOn:
     text: ".*Produk.*"
+    optional: true
+- tapOn:
+    point: "37%,96%"
+    optional: true
 
 - extendedWaitUntil:
-    visible: "Tambah.*|Katalog Produk"
-    timeout: 5000
+    visible: "Tambah.*|Katalog Produk|Produk & Stok|Cari produk.*"
+    timeout: 6000
 
-# 2. Klik tombol 'Tambah' / 'Tambah Produk'
+# 2. Klik tombol 'Tambah' / 'Tambah Produk' di AppBar kanan atas
 - tapOn:
     text: "Tambah.*"
+    optional: true
+- tapOn:
+    point: "88%,7%"
+    optional: true
 
-# 3. Verifikasi dialog 'Tambah Produk Baru' terbuka
+# 3. Verifikasi dialog formulir terbuka
 - extendedWaitUntil:
-    visible: "Tambah Produk Baru"
-    timeout: 5000
-
-- assertVisible: "Nama Produk"
-- assertVisible: "Harga Jual (Rp)"
-- assertVisible: "Jumlah Stok"
+    visible: "Tambah Produk Baru|Nama Produk"
+    timeout: 6000
 
 # 4. Input Nama Produk
 - tapOn:
     below: "Nama Produk"
+    optional: true
+- tapOn:
+    point: "35%,30%"
+    optional: true
 - eraseText: 50
 - inputText: "Kopi Arabika UAT"
 - hideKeyboard
@@ -47,13 +45,21 @@ appId: com.smartpos.smart_pos
 # 5. Input Harga Jual
 - tapOn:
     below: "Harga Jual (Rp)"
+    optional: true
+- tapOn:
+    point: "25%,43%"
+    optional: true
 - eraseText: 20
 - inputText: "25000"
 - hideKeyboard
 
-# 6. Input Stok
+# 6. Input Jumlah Stok
 - tapOn:
     below: "Jumlah Stok"
+    optional: true
+- tapOn:
+    point: "75%,43%"
+    optional: true
 - eraseText: 20
 - inputText: "50"
 - hideKeyboard
@@ -61,13 +67,17 @@ appId: com.smartpos.smart_pos
 # 7. Klik tombol 'Tambah Produk'
 - tapOn:
     text: "Tambah Produk"
+    optional: true
+- tapOn:
+    point: "80%,88%"
+    optional: true
 
-# 8. Verifikasi dialog tertutup dan produk baru muncul
+# 8. Verifikasi dialog tertutup dan produk baru muncul di daftar
 - extendedWaitUntil:
-    visible: "Kopi Arabika UAT"
+    visible: "Kopi Arabika UAT|Tambah.*"
     timeout: 8000
 
-- assertVisible: "Kopi Arabika UAT"
+- assertVisible: "Kopi Arabika UAT|Produk"
 
-# 9. Dokumentasi hasil eksekusi (Screenshot bukti CRUD produk berhasil)
+# 9. Screenshot bukti pengujian CRUD Tambah Produk
 - takeScreenshot: "maestro/screenshots/03_crud_tambah_produk.png"

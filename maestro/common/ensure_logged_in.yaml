@@ -1,54 +1,41 @@
 appId: com.smartpos.smart_pos
 ---
 # ==============================================================================
-# Helper Flow: Ensure Cashier Is Logged In & Ready on POS Screen
+# Helper Flow: Ensure Cashier Is Logged In & on POS Screen
 # ==============================================================================
 
-# 1. Cek apakah sudah berada di layar utama POS. Jika sudah, tidak perlu restart app.
+# Jika sedang di layar login, lakukan proses login kasir
+- runFlow:
+    when:
+      visible: "Masuk ke Smart POS"
+    commands:
+      - tapOn:
+          below: "Alamat Email"
+      - eraseText: 50
+      - inputText: "afifadam707@gmail.com"
+      - hideKeyboard
+
+      - tapOn:
+          below: "Kata Sandi"
+      - eraseText: 50
+      - inputText: "12345678"
+      - hideKeyboard
+
+      - tapOn: "Masuk Sekarang"
+
+# Jika sedang di tab lain (Produk/Laporan/Akun), kembali ke tab POS
 - runFlow:
     when:
       notVisible: "Cari produk atau menu..."
     commands:
-      # Jika aplikasi belum terbuka sama sekali, jalankan aplikasi
-      - runFlow:
-          when:
-            notVisible: "Masuk ke Smart POS"
-          commands:
-            - launchApp:
-                clearState: false
-            - extendedWaitUntil:
-                visible: "Masuk ke Smart POS|Cari produk atau menu...|SMART POS"
-                timeout: 10000
+      - tapOn:
+          text: ".*POS.*"
+          optional: true
+      - tapOn:
+          point: "12%,96%"
+          optional: true
 
-      # Jika berada di layar login, lakukan login dengan akun kasir
-      - runFlow:
-          when:
-            visible: "Masuk ke Smart POS"
-          commands:
-            - tapOn:
-                below: "Alamat Email"
-            - eraseText: 50
-            - inputText: "afifadam707@gmail.com"
-            - hideKeyboard
-
-            - tapOn:
-                below: "Kata Sandi"
-            - eraseText: 50
-            - inputText: "12345678"
-            - hideKeyboard
-
-            - tapOn: "Masuk Sekarang"
-
-      # Jika aplikasi sudah login tapi sedang berada di tab lain (Akun/Laporan/Produk), kembalikan ke tab POS
-      - runFlow:
-          when:
-            visible: "POS"
-          commands:
-            - tapOn:
-                text: "POS"
-                optional: true
-
-# 2. Pastikan layar utama POS sudah aktif dan siap digunakan
+# Tunggu sampai katalog POS siap
 - extendedWaitUntil:
     visible: "Cari produk atau menu...|Semua"
-    timeout: 10000
+    timeout: 8000

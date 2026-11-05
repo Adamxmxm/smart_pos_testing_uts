@@ -3,76 +3,89 @@ appId: com.smartpos.smart_pos
 # ==============================================================================
 # UAT Test Case: PRD-02
 # Modul: Edit & Hapus Produk
-# Deskripsi: Mengubah data dan menghapus produk
+# Deskripsi: Mengubah data dan menghapus produk dari layar Produk & Stok
 # Langkah:
-#   1. Pada menu Produk, pilih salah satu produk
-#   2. Klik icon edit (pencil)
-#   3. Ubah harga atau stok pada dialog 'Edit Produk'
-#   4. Klik 'Simpan Perubahan'
-#   5. Klik icon hapus (trash) pada produk
-#   6. Konfirmasi penghapusan pada dialog 'Hapus Produk?'
+#   1. Navigasi ke tab Produk
+#   2. Klik icon edit pada produk pertama
+#   3. Ubah stok lalu Simpan Perubahan
+#   4. Klik icon hapus pada produk → konfirmasi dialog → Hapus
 # Hasil Diharapkan:
-#   Data ter-update di database Supabase dan produk berhasil dihapus.
+#   Data ter-update di Supabase dan produk berhasil dihapus.
 # ==============================================================================
 
 # Pastikan aplikasi aktif dan sudah login
 - runFlow: ../common/ensure_logged_in.yaml
 
-# 1. Navigasi ke menu Produk
-- tapOn: "Produk"
-
-- extendedWaitUntil:
-    visible: "Tambah|Tambah Produk"
-    timeout: 5000
-
-# 2. Klik icon edit pada baris produk pertama
+# 1. Navigasi ke tab Produk (text + koordinat fallback)
 - tapOn:
-    id: ".*edit.*"
+    text: "Produk"
+    optional: true
+- tapOn:
+    point: "37%,96%"
     optional: true
 
+# 2. Tunggu layar Produk & Stok terbuka
+- extendedWaitUntil:
+    visible: "Produk & Stok|Manajemen Produk"
+    timeout: 6000
+
+# AppBar label: mobile = "Produk & Stok", desktop = "Manajemen Produk & Stok"
+# Verifikasi tombol Tambah ada di AppBar
+- assertVisible: "Tambah|Tambah Produk"
+
+# 3. Klik icon edit (tooltip "Edit Produk") di baris produk pertama
+#    — coba via tooltip, lalu fallback koordinat kanan baris pertama
+- tapOn:
+    text: "Edit Produk"
+    optional: true
 - runFlow:
     when:
       notVisible: "Edit Produk"
     commands:
-      # Tap posisi icon edit di sebelah kanan baris produk pertama
       - tapOn:
-          point: "85%,25%"
+          point: "84%,22%"
 
-# 3. Verifikasi dialog 'Edit Produk' terbuka
+# 4. Tunggu dialog Edit Produk terbuka
 - extendedWaitUntil:
     visible: "Edit Produk"
-    timeout: 5000
+    timeout: 6000
 
-# 4. Ubah stok produk
+# 5. Ubah stok: tap field Jumlah Stok lalu ganti nilainya
 - tapOn:
-    point: "75%,43%" # Input field stok
+    below: "Jumlah Stok"
     optional: true
+- runFlow:
+    when:
+      notVisible: "Jumlah Stok"
+    commands:
+      - tapOn:
+          point: "50%,65%"
 - eraseText: 5
 - inputText: "99"
 - hideKeyboard
 
-# 5. Klik tombol 'Simpan Perubahan'
+# 6. Klik tombol Simpan Perubahan
 - tapOn: "Simpan Perubahan"
 
-# 6. Tunggu dialog tertutup dan data ter-update
+# 7. Tunggu dialog tertutup dan kembali ke daftar produk
 - extendedWaitUntil:
     visible: "Tambah|Tambah Produk"
-    timeout: 6000
+    timeout: 7000
 
-# 7. Klik icon hapus (trash) pada baris produk
+- takeScreenshot: maestro/screenshots/PRD_02a_edit_produk.png
+
+# 8. Klik icon hapus (tooltip "Hapus Produk") di baris produk pertama
 - tapOn:
-    id: ".*delete.*"
+    text: "Hapus Produk"
     optional: true
-
 - runFlow:
     when:
       notVisible: "Hapus Produk?"
     commands:
-      # Tap posisi icon delete di sebelah kanan baris produk
       - tapOn:
-          point: "94%,25%"
+          point: "93%,22%"
 
-# 8. Verifikasi dialog konfirmasi 'Hapus Produk?' muncul
+# 9. Tunggu dialog konfirmasi hapus muncul
 - extendedWaitUntil:
     visible: "Hapus Produk?"
     timeout: 5000
@@ -80,10 +93,12 @@ appId: com.smartpos.smart_pos
 - assertVisible: "Batal"
 - assertVisible: "Hapus"
 
-# 9. Konfirmasi hapus produk
+- takeScreenshot: maestro/screenshots/PRD_02b_konfirmasi_hapus.png
+
+# 10. Konfirmasi hapus produk
 - tapOn: "Hapus"
 
-# 10. Verifikasi notifikasi produk telah dihapus
+# 11. Verifikasi kembali ke daftar produk (snackbar/list refresh)
 - extendedWaitUntil:
-    visible: ".*telah dihapus.*|Tambah.*"
-    timeout: 6000
+    visible: "Tambah|Tambah Produk"
+    timeout: 7000

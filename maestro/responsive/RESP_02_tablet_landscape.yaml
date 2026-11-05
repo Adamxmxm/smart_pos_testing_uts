@@ -2,35 +2,48 @@ appId: com.smartpos.smart_pos
 ---
 # ==============================================================================
 # UAT Test Case: RESP-02
-# Modul: Responsive UI
-# Deskripsi: Tampilan layout pada tablet (Landscape Split-Screen)
+# Modul: Responsive UI — Tablet Landscape (Split-Screen)
+# Deskripsi: Verifikasi layout tablet landscape (sidebar nav + split-screen)
 # Langkah:
-#   1. Buka aplikasi di tablet / mode landscape (>=600dp)
-#   2. Amati susunan layout split-screen
+#   1. Putar layar ke LANDSCAPE (simulasi tablet >= 600dp)
+#   2. Verifikasi sidebar muncul (Kasir POS label tampil)
+#   3. Verifikasi panel kiri: katalog produk (Cari produk, Semua)
+#   4. Verifikasi panel kanan: persistent cart (Keranjang, Total Tagihan)
+#   5. Kembalikan ke PORTRAIT
 # Hasil Diharapkan:
-#   Tampilan split-screen: katalog di kiri (grid), keranjang belanja di kanan (persistent panel).
+#   Layout split-screen: katalog di kiri, keranjang persistent di kanan.
 # ==============================================================================
 
 # Pastikan aplikasi aktif dan sudah login
 - runFlow: ../common/ensure_logged_in.yaml
 
-# 1. Putar orientasi layar ke Landscape (simulasi tablet / mode layar lebar)
+# 1. Putar ke landscape untuk simulasi tablet
 - setOrientation: LANDSCAPE
 
-# 2. Verifikasi susunan Split-Screen layout:
-# Bagian kiri: Katalog produk & pencarian
+# 2. Tunggu layout tablet landscape load
 - extendedWaitUntil:
     visible: "Cari produk atau menu..."
-    timeout: 5000
+    timeout: 7000
 
+# 3. Verifikasi panel kiri: katalog produk & filter
+- assertVisible: "Cari produk atau menu..."
 - assertVisible: "Semua"
 
-# Bagian kanan: Persistent Cart Panel (selalu tampil tanpa perlu buka modal)
+# 4. Verifikasi panel kanan: persistent cart panel
+#    Di tablet, CartPanel langsung tampil (bukan bottom sheet)
 - assertVisible: "Keranjang"
 - assertVisible: "Total Tagihan"
 - assertVisible: "Simpan Tagihan (Open Nota)"
 - assertVisible: "Bayar Tunai"
 - assertVisible: "Non-Tunai"
 
-# 3. Kembalikan orientasi ke PORTRAIT untuk pengujian selanjutnya
+# 5. Screenshot layout split-screen landscape
+- takeScreenshot: maestro/screenshots/RESP_02_tablet_landscape.png
+
+# 6. Kembalikan ke portrait untuk pengujian selanjutnya
 - setOrientation: PORTRAIT
+
+# 7. Verifikasi kembali ke layout mobile
+- extendedWaitUntil:
+    visible: "Cari produk atau menu..."
+    timeout: 5000

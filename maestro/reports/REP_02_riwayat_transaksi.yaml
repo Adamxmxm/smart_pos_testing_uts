@@ -3,11 +3,11 @@ appId: com.smartpos.smart_pos
 # ==============================================================================
 # UAT Test Case: REP-02
 # Modul: Riwayat Transaksi
-# Deskripsi: Melihat riwayat dan detail transaksi
+# Deskripsi: Melihat riwayat dan detail transaksi dari layar Laporan
 # Langkah:
 #   1. Buka menu Laporan di Navbar
 #   2. Scroll ke bagian 'Riwayat Transaksi Penjualan'
-#   3. Amati daftar transaksi (nomor invoice, tanggal, total, kasir, status)
+#   3. Amati daftar transaksi (tanggal, total, metode, status COMPLETED)
 # Hasil Diharapkan:
 #   Menampilkan detail transaksi belanja dengan akurat.
 # ==============================================================================
@@ -15,25 +15,38 @@ appId: com.smartpos.smart_pos
 # Pastikan aplikasi aktif dan sudah login
 - runFlow: ../common/ensure_logged_in.yaml
 
-# 1. Buka menu Laporan
-- tapOn: "Laporan"
+# 1. Navigasi ke tab Laporan (text + koordinat fallback)
+- tapOn:
+    text: "Laporan"
+    optional: true
+- tapOn:
+    point: "62%,96%"
+    optional: true
 
+# 2. Tunggu layar laporan terbuka
 - extendedWaitUntil:
-    visible: "Riwayat Transaksi Penjualan"
-    timeout: 5000
+    visible: "Laporan Penjualan|Laporan & Analitik Penjualan"
+    timeout: 7000
 
-# 2. Scroll ke bawah menuju tabel riwayat transaksi
+# 3. Verifikasi header KPI Cards muncul
+- assertVisible: "Total Omset Penjualan"
+
+# 4. Scroll ke bawah menuju tabel riwayat transaksi
 - scrollUntilVisible:
     element:
       text: "Riwayat Transaksi Penjualan"
     direction: DOWN
+    timeout: 5000
 
-# 3. Verifikasi riwayat transaksi tampil atau status kosong jika belum ada
+- assertVisible: "Riwayat Transaksi Penjualan"
+
+# 5. Verifikasi konten riwayat — cek jika ada data atau kosong
 - runFlow:
     when:
       visible: "COMPLETED"
     commands:
       - assertVisible: "COMPLETED"
+      # Paymentmethod ditampilkan: TUNAI atau NON_TUNAI
       - assertVisible: "TUNAI|NON_TUNAI"
 
 - runFlow:
@@ -41,3 +54,6 @@ appId: com.smartpos.smart_pos
       visible: "Belum ada transaksi pada periode ini"
     commands:
       - assertVisible: "Belum ada transaksi pada periode ini"
+
+# 6. Screenshot riwayat transaksi
+- takeScreenshot: maestro/screenshots/REP_02_riwayat_transaksi.png

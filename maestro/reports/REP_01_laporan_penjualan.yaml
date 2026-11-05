@@ -15,30 +15,41 @@ appId: com.smartpos.smart_pos
 # Pastikan aplikasi aktif dan sudah login
 - runFlow: ../common/ensure_logged_in.yaml
 
-# 1. Buka menu Laporan
-- tapOn: "Laporan"
+# 1. Buka menu Laporan via text (atau koordinat fallback)
+- tapOn:
+    text: "Laporan"
+    optional: true
+- tapOn:
+    point: "62%,96%"
+    optional: true
 
 - extendedWaitUntil:
     visible: "Laporan Penjualan|Laporan & Analitik Penjualan"
-    timeout: 5000
+    timeout: 7000
 
 # 2. Verifikasi 3 KPI Cards Utama Penjualan
 - assertVisible: "Total Omset Penjualan"
 - assertVisible: "Total Transaksi"
 - assertVisible: "Rata-rata Keranjang (AOV)"
 
-# 3. Uji interaksi Filter Periode Waktu
+# 3. Uji interaksi Filter Periode — Minggu Ini
 - tapOn: "Minggu Ini"
 - assertVisible: "Total Omset Penjualan"
 
+# Filter — Bulan Ini
 - tapOn: "Bulan Ini"
 - assertVisible: "Total Omset Penjualan"
 
+# Filter — Semua Waktu
 - tapOn: "Semua Waktu"
 - assertVisible: "Total Omset Penjualan"
 
+# Filter — Hari Ini (kembali ke default)
 - tapOn: "Hari Ini"
 - assertVisible: "Total Omset Penjualan"
 
-# 4. Verifikasi tombol Export laporan tersedia
-- assertVisible: "Export.*|Export PDF|Export Excel"
+# 4. Verifikasi tombol Export tersedia (label "Export" di AppBar mobile)
+- assertVisible: "Export"
+
+# 5. Screenshot hasil
+- takeScreenshot: maestro/screenshots/REP_01_laporan_penjualan.png

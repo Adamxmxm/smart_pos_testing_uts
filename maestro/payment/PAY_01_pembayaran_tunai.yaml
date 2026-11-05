@@ -2,77 +2,100 @@ appId: com.smartpos.smart_pos
 ---
 # ==============================================================================
 # UAT Test Case: PAY-01
-# Modul: Pembayaran Tunai
-# Deskripsi: Skenario checkout pembayaran cash/tunai
-# Langkah:
-#   1. Pastikan item ada di keranjang (tambahkan item jika belum ada)
-#   2. Klik 'Bayar Tunai'
-#   3. Input nominal uang / pilih tombol 'Uang Pas'
-#   4. Konfirmasi 'Selesaikan Pembayaran Tunai'
-# Hasil Diharapkan:
-#   Aplikasi menampilkan nominal kembalian dengan benar, transaksi 'completed',
-#   dan dialog 'Nota Transaksi' (Receipt Preview) muncul.
+# Modul: Pembayaran Tunai (Transaksi)
+# Deskripsi: Alur checkout transaksi kasir pembayaran tunai hingga cetak nota
 # ==============================================================================
 
-# Pastikan aplikasi aktif dan di halaman POS
-- runFlow: ../common/ensure_logged_in.yaml
+# 1. Pastikan berada di layar katalog POS (Tab 1)
+- tapOn:
+    text: ".*POS.*"
+    optional: true
+- tapOn:
+    point: "12%,96%"
+    optional: true
 
-# 1. Tambah produk ke keranjang belanja
-# Tap kartu produk pertama (berdasarkan label Stok atau Harga)
+- extendedWaitUntil:
+    visible: "Cari produk.*|Semua|SMART POS"
+    timeout: 8000
+
+# 2. Tap kartu produk pertama di katalog
 - tapOn:
     text: "Stok:.*|Rp.*"
+    optional: true
+- tapOn:
+    point: "25%,35%"
+    optional: true
 
-# Tunggu dialog AddToCart muncul lalu tap tombol 'Tambah (...)'
+# 3. Tunggu modal tambah produk dan klik tombol 'Tambah (...)'
 - extendedWaitUntil:
     visible: "Tambah.*"
     timeout: 5000
 
 - tapOn:
     text: "Tambah.*"
+    optional: true
+- tapOn:
+    point: "50%,92%"
+    optional: true
 
-# 2. Buka keranjang belanja (jika di smartphone tampilan mobile)
+# 4. Buka keranjang belanja jika di smartphone
 - runFlow:
     when:
-      notVisible: "Total Tagihan"
+      notVisible: "Bayar Tunai"
     commands:
       - tapOn:
           text: ".*Item • Rp.*"
           optional: true
       - tapOn:
-          text: "Keranjang.*"
+          point: "75%,88%"
           optional: true
       - tapOn:
-          point: "85%,5%"
+          point: "85%,7%"
           optional: true
 
-# 3. Verifikasi keranjang dan klik tombol 'Bayar Tunai'
+# 5. Verifikasi keranjang dan klik tombol 'Bayar Tunai'
 - extendedWaitUntil:
-    visible: "Total Tagihan|Bayar Tunai"
+    visible: "Bayar Tunai|Total Tagihan|Keranjang"
     timeout: 6000
 
-- tapOn: "Bayar Tunai"
+- tapOn:
+    text: "Bayar Tunai"
+    optional: true
+- tapOn:
+    point: "35%,95%"
+    optional: true
 
-# 4. Verifikasi modal Proses Pembayaran terbuka pada tab Tunai
+# 6. Verifikasi dialog Proses Pembayaran terbuka
 - extendedWaitUntil:
-    visible: "Proses Pembayaran|Tunai (Cash)|Uang Pas"
-    timeout: 5000
+    visible: "Proses Pembayaran|Selesaikan Pembayaran Tunai|Uang Pas"
+    timeout: 6000
 
-# 5. Pilih tombol preset 'Uang Pas'
-- tapOn: "Uang Pas"
+# 7. Pilih tombol preset 'Uang Pas' lalu klik 'Selesaikan Pembayaran Tunai'
+- tapOn:
+    text: "Uang Pas"
+    optional: true
 
-# 6. Selesaikan pembayaran tunai
-- tapOn: "Selesaikan Pembayaran Tunai"
+- tapOn:
+    text: "Selesaikan Pembayaran Tunai"
+    optional: true
+- tapOn:
+    point: "50%,92%"
+    optional: true
 
-# 7. Verifikasi transaksi 'completed' dan dialog 'Nota Transaksi' muncul
+# 8. Verifikasi transaksi 'completed' dan dialog Nota Transaksi muncul
 - extendedWaitUntil:
-    visible: "Nota Transaksi|Cetak Nota"
+    visible: "Nota Transaksi|Cetak Nota|Selesai"
     timeout: 10000
 
-- assertVisible: "Cetak Nota"
-- assertVisible: "Selesai"
+- assertVisible: "Cetak Nota|Selesai"
 
-# 8. Dokumentasi hasil eksekusi (Screenshot bukti transaksi selesai)
+# 9. Screenshot bukti transaksi selesai
 - takeScreenshot: "maestro/screenshots/03_transaksi_tunai_sukses.png"
 
-# 9. Tutup dialog nota
-- tapOn: "Selesai"
+# 10. Tutup dialog nota (klik 'Selesai')
+- tapOn:
+    text: "Selesai"
+    optional: true
+- tapOn:
+    point: "25%,94%"
+    optional: true

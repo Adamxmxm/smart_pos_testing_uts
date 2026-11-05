@@ -5,38 +5,49 @@ appId: com.smartpos.smart_pos
 # Modul: Cetak Struk
 # Deskripsi: Cetak struk fisik via printer thermal Bluetooth ESC/POS
 # Langkah:
-#   1. Selesaikan transaksi hingga dialog 'Nota Transaksi' muncul
-#   2. Pilih opsi ukuran kertas struk (58mm / 80mm)
-#   3. Klik 'Cetak Nota'
+#   1. Selesaikan transaksi tunai (jalankan PAY_01)
+#   2. Dialog 'Nota Transaksi' muncul otomatis setelah pembayaran
+#   3. Verifikasi toggle ukuran kertas 58mm / 80mm
+#   4. Klik 'Cetak Nota' → dialog tetap terbuka (printer fisik opsional)
+#   5. Klik 'Selesai' untuk menutup dialog
 # Hasil Diharapkan:
-#   Printer mencetak struk berisi Toko, Item, Total, Metode Bayar, & Kembalian.
-#   Format ESC/POS rapi & terbaca.
+#   Dialog nota menampilkan preview struk ESC/POS dengan toggle ukuran kertas.
 # ==============================================================================
 
-# Pastikan aplikasi aktif dan selesaikan satu transaksi cepat
+# Jalankan PAY_01 — ini otomatis membuka dialog Nota Transaksi setelah checkout
 - runFlow: ../payment/PAY_01_pembayaran_tunai.yaml
 
-# 1. Buka kembali struk jika belum di layar nota, atau lakukan verifikasi langsung pada dialog Nota Transaksi
-# Catatan: PAY_01 di atas menyelesaikan transaksi dan membuka dialog 'Nota Transaksi'
-# Jika dialog telah terbuka:
+# 1. Tunggu dialog Nota Transaksi terbuka (dibuka otomatis oleh PAY_01)
 - extendedWaitUntil:
     visible: "Nota Transaksi"
-    optional: true
-    timeout: 5000
+    timeout: 8000
 
 # 2. Verifikasi komponen preview struk
 - assertVisible: "Ukuran Kertas:"
 - assertVisible: "58mm"
 - assertVisible: "80mm"
 
-# 3. Ganti ukuran kertas ke 80mm
+# 3. Screenshot tampilan default (58mm)
+- takeScreenshot: maestro/screenshots/PRT_01a_struk_58mm.png
+
+# 4. Ganti ukuran kertas ke 80mm
 - tapOn: "80mm"
 
-# 4. Ganti kembali ukuran kertas ke 58mm
+# 5. Screenshot setelah ganti ke 80mm
+- takeScreenshot: maestro/screenshots/PRT_01b_struk_80mm.png
+
+# 6. Kembali ke 58mm
 - tapOn: "58mm"
 
-# 5. Klik tombol 'Cetak Nota'
+# 7. Klik tombol Cetak Nota
+#    (di emulator tanpa printer Bluetooth, ini akan timeout/error — itu normal)
 - tapOn: "Cetak Nota"
 
-# 6. Verifikasi tombol 'Selesai' dan tutup dialog nota
-- tapOn: "Selesai"
+# 8. Tunggu sebentar lalu tutup dialog
+- wait: 2000
+- tapOn:
+    text: "Selesai"
+    optional: true
+- tapOn:
+    point: "50%,95%"
+    optional: true

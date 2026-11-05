@@ -3,56 +3,76 @@ appId: com.smartpos.smart_pos
 # ==============================================================================
 # UAT Test Case: PRT-02
 # Modul: Reprint Struk
-# Deskripsi: Cetak ulang struk dari riwayat transaksi
+# Deskripsi: Cetak ulang struk dari riwayat transaksi di layar Laporan
 # Langkah:
-#   1. Masuk ke menu Laporan
-#   2. Scroll ke bagian 'Riwayat Transaksi Penjualan'
-#   3. Pilih salah satu transaksi lalu klik icon printer ('Cetak Struk Ulang')
-#   4. Pada dialog Nota Transaksi yang terbuka, klik 'Cetak Nota'
+#   1. Masuk ke tab Laporan
+#   2. Scroll ke 'Riwayat Transaksi Penjualan'
+#   3. Tap icon printer di baris transaksi pertama
+#   4. Verifikasi dialog 'Nota Transaksi' terbuka → Cetak Nota → Selesai
 # Hasil Diharapkan:
-#   Printer mencetak ulang struk transaksi terkait.
+#   Dialog nota transaksi terbuka dan tombol Cetak Nota dapat diklik.
 # ==============================================================================
 
 # Pastikan aplikasi aktif dan sudah login
 - runFlow: ../common/ensure_logged_in.yaml
 
-# 1. Navigasi ke menu Laporan
-- tapOn: "Laporan"
-
-- extendedWaitUntil:
-    visible: "Riwayat Transaksi Penjualan"
-    timeout: 5000
-
-# 2. Scroll ke daftar transaksi
-- scrollUntilVisible:
-    element:
-      text: "COMPLETED"
-    direction: DOWN
-
-# 3. Klik tombol / icon Cetak Struk Ulang pada transaksi
+# 1. Navigasi ke tab Laporan (text + koordinat fallback)
 - tapOn:
-    id: ".*print.*"
+    text: "Laporan"
+    optional: true
+- tapOn:
+    point: "62%,96%"
     optional: true
 
+# 2. Tunggu layar Laporan terbuka
+- extendedWaitUntil:
+    visible: "Laporan Penjualan|Laporan & Analitik Penjualan"
+    timeout: 7000
+
+# 3. Scroll ke bagian Riwayat Transaksi Penjualan
+- scrollUntilVisible:
+    element:
+      text: "Riwayat Transaksi Penjualan"
+    direction: DOWN
+    timeout: 5000
+
+- assertVisible: "Riwayat Transaksi Penjualan"
+
+# 4. Pastikan ada transaksi COMPLETED
+- extendedWaitUntil:
+    visible: "COMPLETED"
+    timeout: 5000
+    optional: true
+
+# 5. Tap icon printer (tooltip "Cetak Struk Ulang") di baris transaksi pertama
+#    Koordinat: pojok kanan baris pertama setelah header riwayat
+- tapOn:
+    text: "Cetak Struk Ulang"
+    optional: true
 - runFlow:
     when:
       notVisible: "Nota Transaksi"
     commands:
-      # Tap icon print di sebelah kanan baris transaksi pertama
       - tapOn:
           point: "92%,65%"
-          optional: true
 
-# 4. Verifikasi dialog 'Nota Transaksi' terbuka
+# 6. Verifikasi dialog Nota Transaksi terbuka
 - extendedWaitUntil:
     visible: "Nota Transaksi"
-    timeout: 5000
+    timeout: 6000
 
 - assertVisible: "Cetak Nota"
 - assertVisible: "Selesai"
+- assertVisible: "Ukuran Kertas:"
 
-# 5. Klik tombol 'Cetak Nota' untuk mencetak ulang
+# 7. Screenshot dialog nota
+- takeScreenshot: maestro/screenshots/PRT_02_reprint_struk.png
+
+# 8. Klik Cetak Nota (opsional di emulator tanpa printer)
 - tapOn: "Cetak Nota"
 
-# 6. Tutup dialog nota
-- tapOn: "Selesai"
+# 9. Tutup dialog
+- wait: 1500
+- tapOn:
+    text: "Selesai"
+    optional: true

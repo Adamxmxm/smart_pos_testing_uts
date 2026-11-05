@@ -2,51 +2,77 @@ appId: com.smartpos.smart_pos
 ---
 # ==============================================================================
 # UAT Test Case: RESP-01
-# Modul: Responsive UI
-# Deskripsi: Tampilan layout pada smartphone (Mobile Portrait)
+# Modul: Responsive UI — Mobile Portrait
+# Deskripsi: Verifikasi layout smartphone (single-column, bottom nav, bottom sheet cart)
 # Langkah:
-#   1. Buka aplikasi di smartphone/mode portrait
-#   2. Amati susunan layout
+#   1. Pastikan portrait mode aktif
+#   2. Verifikasi bottom navigation bar tampil (POS, Produk, Laporan, Akun)
+#   3. Verifikasi katalog produk tampil (search bar + tab filter)
+#   4. Tambah produk ke keranjang → FAB muncul
+#   5. Tap icon keranjang AppBar → bottom sheet terbuka dengan Total Tagihan
 # Hasil Diharapkan:
-#   Tampilan single-column, keranjang belanja muncul sebagai expandable bottom sheet.
+#   Layout single-column, keranjang sebagai expandable bottom sheet.
 # ==============================================================================
+
+# Pastikan portrait mode
+- setOrientation: PORTRAIT
 
 # Pastikan aplikasi aktif dan sudah login
 - runFlow: ../common/ensure_logged_in.yaml
 
-# 1. Verifikasi susunan UI Smartphone Portrait
-# Bottom navigation bar harus tampak di bawah
+# 1. Verifikasi bottom navigation bar labels
 - assertVisible: "POS"
 - assertVisible: "Produk"
 - assertVisible: "Laporan"
 - assertVisible: "Akun"
 
-# Katalog produk single-column / 2-column mobile grid
+# 2. Verifikasi POS screen: search bar dan tab filter kategori
 - assertVisible: "Cari produk atau menu..."
 - assertVisible: "Semua"
 
-# 2. Buka keranjang belanja mobile via tombol keranjang di AppBar
+# 3. Screenshot layout POS portrait
+- takeScreenshot: maestro/screenshots/RESP_01a_pos_portrait.png
+
+# 4. Tambah produk ke keranjang — tap produk pertama
 - tapOn:
-    id: ".*" # Icon keranjang
-    text: "Keranjang.*"
+    point: "25%,32%"
     optional: true
 
-# Alternatif: tap langsung jika bottom sheet / panel keranjang dibuka
-- runFlow:
-    when:
-      notVisible: "Total Tagihan"
-    commands:
-      # Tap icon keranjang belanja pada AppBar
-      - tapOn:
-          point: "85%,5%" # Lokasi tombol action keranjang di AppBar mobile
+# 5. Tunggu dialog tambah ke keranjang
+- extendedWaitUntil:
+    visible: "Tambah.*Rp|Tambah ke Keranjang"
+    timeout: 5000
+    optional: true
 
-# 3. Verifikasi Expandable Bottom Sheet Keranjang Belanja tampil
+# 6. Tap tombol Tambah ke keranjang di dialog
+- tapOn:
+    text: "Tambah.*"
+    optional: true
+- tapOn:
+    point: "50%,80%"
+    optional: true
+
+# 7. Tutup dialog jika masih terbuka
+- back
+  
+# 8. Buka bottom sheet keranjang via icon keranjang di AppBar
+#    (pojok kanan atas AppBar, sekitar 85%,5%)
+- tapOn:
+    point: "85%,5%"
+    optional: true
+
+# 9. Verifikasi bottom sheet keranjang terbuka
 - extendedWaitUntil:
     visible: "Keranjang"
     timeout: 5000
 
 - assertVisible: "Total Tagihan"
 - assertVisible: "Simpan Tagihan (Open Nota)"
+- assertVisible: "Bayar Tunai"
+- assertVisible: "Non-Tunai"
 
-# 4. Tutup kembali bottom sheet keranjang belanja
+# 10. Screenshot bottom sheet keranjang
+- takeScreenshot: maestro/screenshots/RESP_01b_cart_bottomsheet.png
+
+# 11. Tutup bottom sheet
 - back

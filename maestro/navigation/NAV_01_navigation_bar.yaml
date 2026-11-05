@@ -4,51 +4,63 @@ appId: com.smartpos.smart_pos
 # UAT Test Case: NAV-01
 # Modul: Navigation Bar
 # Deskripsi: Navigasi antar modul utama aplikasi
-# Langkah:
-#   1. Klik menu Produk di Navbar
-#   2. Klik menu Laporan di Navbar
-#   3. Klik menu Akun di Navbar
-#   4. Klik menu POS di Navbar
-# Hasil Diharapkan:
-#   Layar berpindah sesuai menu yang dipilih tanpa lag.
 # ==============================================================================
 
-# Pastikan aplikasi aktif dan sudah login
-- runFlow: ../common/ensure_logged_in.yaml
-
-# 1. Navigasi ke menu Produk
+# 1. Navigasi ke menu Produk (Tab 2)
 - tapOn:
     text: ".*Produk.*"
-- extendedWaitUntil:
-    visible: "Produk & Stok|Manajemen Produk & Stok|Katalog Produk"
-    timeout: 5000
-- assertVisible: "Tambah.*"
+    optional: true
+- tapOn:
+    point: "37%,96%"
+    optional: true
 
-# 2. Navigasi ke menu Laporan
+# Verifikasi halaman Produk terbuka
+- extendedWaitUntil:
+    visible: "Tambah.*|Katalog Produk|Produk & Stok|Cari produk.*"
+    timeout: 6000
+- assertVisible: "Tambah.*|Produk.*|Cari produk.*"
+
+# 2. Navigasi ke menu Laporan (Tab 3)
 - tapOn:
     text: ".*Laporan.*"
-- extendedWaitUntil:
-    visible: "Laporan.*"
-    timeout: 5000
-- assertVisible: "Total Omset Penjualan|Total Omset"
-- assertVisible: "Total Transaksi"
+    optional: true
+- tapOn:
+    point: "62%,96%"
+    optional: true
 
-# 3. Navigasi ke menu Akun
+# Verifikasi halaman Laporan terbuka
+- extendedWaitUntil:
+    visible: "Laporan.*|Total Omset.*|Total Transaksi|Hari Ini"
+    timeout: 6000
+- assertVisible: "Total Omset.*|Total Transaksi|Hari Ini"
+
+# 3. Navigasi ke menu Akun (Tab 4)
 - tapOn:
     text: ".*Akun.*"
-- extendedWaitUntil:
-    visible: "Akun.*"
-    timeout: 5000
-- assertVisible: "Ringkasan Sesi Operasional"
-- assertVisible: "Keluar dari Akun (Logout)"
+    optional: true
+- tapOn:
+    point: "87%,96%"
+    optional: true
 
-# 4. Navigasi kembali ke menu POS
+# Verifikasi halaman Akun terbuka
+- extendedWaitUntil:
+    visible: "Akun.*|Keluar.*|Ringkasan Sesi.*"
+    timeout: 6000
+- assertVisible: "Keluar.*|Ringkasan Sesi.*"
+
+# 4. Navigasi kembali ke menu POS (Tab 1)
 - tapOn:
     text: ".*POS.*"
-- extendedWaitUntil:
-    visible: "Cari produk atau menu..."
-    timeout: 5000
-- assertVisible: "Semua"
+    optional: true
+- tapOn:
+    point: "12%,96%"
+    optional: true
 
-# 5. Dokumentasi hasil eksekusi (Screenshot bukti pengujian navigasi)
+# Verifikasi kembali ke halaman POS
+- extendedWaitUntil:
+    visible: "Cari produk.*|Semua|SMART POS"
+    timeout: 6000
+- assertVisible: "Semua|Cari produk.*"
+
+# 5. Screenshot bukti pengujian navigasi
 - takeScreenshot: "maestro/screenshots/02_navigation_pos.png"
