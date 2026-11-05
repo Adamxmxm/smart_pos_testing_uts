@@ -17,14 +17,16 @@ appId: com.smartpos.smart_pos
 - runFlow: ../common/ensure_logged_in.yaml
 
 # 1. Navigasi ke menu Produk
-- tapOn: "Produk"
+- tapOn:
+    text: ".*Produk.*"
 
 - extendedWaitUntil:
-    visible: "Tambah|Tambah Produk"
+    visible: "Tambah.*|Katalog Produk"
     timeout: 5000
 
 # 2. Klik tombol 'Tambah' / 'Tambah Produk'
-- tapOn: "Tambah.*"
+- tapOn:
+    text: "Tambah.*"
 
 # 3. Verifikasi dialog 'Tambah Produk Baru' terbuka
 - extendedWaitUntil:
@@ -36,45 +38,36 @@ appId: com.smartpos.smart_pos
 - assertVisible: "Jumlah Stok"
 
 # 4. Input Nama Produk
-- tapOn: "Contoh: Kopi Susu Gula Aren"
+- tapOn:
+    below: "Nama Produk"
+- eraseText: 50
 - inputText: "Kopi Arabika UAT"
 - hideKeyboard
 
-# 5. Pilih Kategori jika dropdown tersedia
+# 5. Input Harga Jual
 - tapOn:
-    text: "Pilih Kategori"
-    optional: true
-
-# 6. Input Harga Jual
-- tapOn:
-    point: "25%,43%" # Posisi input harga
-    optional: true
+    below: "Harga Jual (Rp)"
+- eraseText: 20
 - inputText: "25000"
 - hideKeyboard
 
-# 7. Input Stok
+# 6. Input Stok
 - tapOn:
-    point: "75%,43%" # Posisi input stok
-    optional: true
+    below: "Jumlah Stok"
+- eraseText: 20
 - inputText: "50"
 - hideKeyboard
 
-# 8. Masukkan URL Foto Produk
+# 7. Klik tombol 'Tambah Produk'
 - tapOn:
-    text: "Atau masukkan URL foto (opsional)..."
-    optional: true
-- inputText: "https://images.unsplash.com/photo-1510591509098-f4fdc6d0ff04"
-- hideKeyboard
+    text: "Tambah Produk"
 
-# 9. Klik tombol 'Tambah Produk'
-- tapOn: "Tambah Produk"
-
-# 10. Verifikasi dialog tertutup dan produk baru muncul
+# 8. Verifikasi dialog tertutup dan produk baru muncul
 - extendedWaitUntil:
     visible: "Kopi Arabika UAT"
     timeout: 8000
 
 - assertVisible: "Kopi Arabika UAT"
 
-# 11. Dokumentasi hasil eksekusi (Screenshot bukti CRUD produk berhasil)
+# 9. Dokumentasi hasil eksekusi (Screenshot bukti CRUD produk berhasil)
 - takeScreenshot: "maestro/screenshots/03_crud_tambah_produk.png"

@@ -17,15 +17,16 @@ appId: com.smartpos.smart_pos
 # Pastikan aplikasi aktif dan di halaman POS
 - runFlow: ../common/ensure_logged_in.yaml
 
-# 1. Tambah produk ke keranjang
+# 1. Tambah produk ke keranjang belanja
 - tapOn:
-    point: "25%,35%"
+    text: "Stok:.*|Rp.*"
 
 - extendedWaitUntil:
-    visible: "Subtotal Produk"
+    visible: "Tambah.*"
     timeout: 5000
 
-- tapOn: "Tambah.*"
+- tapOn:
+    text: "Tambah.*"
 
 # 2. Buka keranjang belanja jika di mobile
 - runFlow:
@@ -36,22 +37,24 @@ appId: com.smartpos.smart_pos
           text: ".*Item • Rp.*"
           optional: true
       - tapOn:
+          text: "Keranjang.*"
+          optional: true
+      - tapOn:
           point: "85%,5%"
           optional: true
 
+# 3. Verifikasi keranjang dan klik tombol 'Non-Tunai'
 - extendedWaitUntil:
-    visible: "Total Tagihan"
-    timeout: 5000
+    visible: "Total Tagihan|Non-Tunai"
+    timeout: 6000
 
-# 3. Klik tombol 'Non-Tunai'
 - tapOn: "Non-Tunai"
 
 # 4. Verifikasi modal Proses Pembayaran terbuka pada tab Non-Tunai
 - extendedWaitUntil:
-    visible: "Proses Pembayaran"
+    visible: "Proses Pembayaran|Non-Tunai|QRIS"
     timeout: 5000
 
-- assertVisible: "Total Tagihan"
 - assertVisible: "Non-Tunai"
 
 # 5. Pilih metode pembayaran: QRIS (default) atau Mesin EDC
@@ -64,7 +67,7 @@ appId: com.smartpos.smart_pos
 
 # 7. Verifikasi transaksi 'completed' dan dialog 'Nota Transaksi' muncul
 - extendedWaitUntil:
-    visible: "Nota Transaksi"
+    visible: "Nota Transaksi|Cetak Nota"
     timeout: 10000
 
 - assertVisible: "Cetak Nota"

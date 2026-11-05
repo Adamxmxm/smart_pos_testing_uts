@@ -28,13 +28,13 @@ appId: com.smartpos.smart_pos
             - tapOn:
                 below: "Alamat Email"
             - eraseText: 50
-            - inputText: ${EMAIL:-"afifadam707@gmail.com"}
+            - inputText: "afifadam707@gmail.com"
             - hideKeyboard
 
             - tapOn:
                 below: "Kata Sandi"
             - eraseText: 50
-            - inputText: ${PASSWORD:-"12345678"}
+            - inputText: "12345678"
             - hideKeyboard
 
             - tapOn: "Masuk Sekarang"

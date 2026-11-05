@@ -37,12 +37,12 @@ appId: com.smartpos.smart_pos
 - inputText: "Kasir UAT Test"
 - hideKeyboard
 
-- tapOn: "kasir@toko.com"
+- tapOn: "kasir5@toko.com"
 - inputText: "kasir_uat_${Date.now()}@example.com"
 - hideKeyboard
 
 - tapOn: "Minimal 6 karakter"
-- inputText: "password123"
+- inputText: "password12345"
 - hideKeyboard
 
 # 3. Klik tombol 'Daftar Sekarang'

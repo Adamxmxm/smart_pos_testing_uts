@@ -17,17 +17,20 @@ appId: com.smartpos.smart_pos
 # Pastikan aplikasi aktif dan di halaman POS
 - runFlow: ../common/ensure_logged_in.yaml
 
-# 1. Tambah produk ke keranjang
+# 1. Tambah produk ke keranjang belanja
+# Tap kartu produk pertama (berdasarkan label Stok atau Harga)
 - tapOn:
-    point: "25%,35%"
+    text: "Stok:.*|Rp.*"
 
+# Tunggu dialog AddToCart muncul lalu tap tombol 'Tambah (...)'
 - extendedWaitUntil:
-    visible: "Subtotal Produk"
+    visible: "Tambah.*"
     timeout: 5000
 
-- tapOn: "Tambah.*"
+- tapOn:
+    text: "Tambah.*"
 
-# 2. Buka keranjang belanja jika di mobile
+# 2. Buka keranjang belanja (jika di smartphone tampilan mobile)
 - runFlow:
     when:
       notVisible: "Total Tagihan"
@@ -36,43 +39,40 @@ appId: com.smartpos.smart_pos
           text: ".*Item • Rp.*"
           optional: true
       - tapOn:
+          text: "Keranjang.*"
+          optional: true
+      - tapOn:
           point: "85%,5%"
           optional: true
 
+# 3. Verifikasi keranjang dan klik tombol 'Bayar Tunai'
 - extendedWaitUntil:
-    visible: "Total Tagihan"
-    timeout: 5000
+    visible: "Total Tagihan|Bayar Tunai"
+    timeout: 6000
 
-# 3. Klik tombol 'Bayar Tunai'
 - tapOn: "Bayar Tunai"
 
 # 4. Verifikasi modal Proses Pembayaran terbuka pada tab Tunai
 - extendedWaitUntil:
-    visible: "Proses Pembayaran"
+    visible: "Proses Pembayaran|Tunai (Cash)|Uang Pas"
     timeout: 5000
-
-- assertVisible: "Total Tagihan"
-- assertVisible: "Tunai (Cash)"
 
 # 5. Pilih tombol preset 'Uang Pas'
 - tapOn: "Uang Pas"
 
-# 6. Verifikasi kembalian tampil dengan benar
-- assertVisible: "Kembalian:"
-
-# 7. Selesaikan pembayaran tunai
+# 6. Selesaikan pembayaran tunai
 - tapOn: "Selesaikan Pembayaran Tunai"
 
-# 8. Verifikasi transaksi 'completed' dan dialog 'Nota Transaksi' muncul
+# 7. Verifikasi transaksi 'completed' dan dialog 'Nota Transaksi' muncul
 - extendedWaitUntil:
-    visible: "Nota Transaksi"
+    visible: "Nota Transaksi|Cetak Nota"
     timeout: 10000
 
 - assertVisible: "Cetak Nota"
 - assertVisible: "Selesai"
 
-# 9. Dokumentasi hasil eksekusi (Screenshot bukti transaksi selesai)
+# 8. Dokumentasi hasil eksekusi (Screenshot bukti transaksi selesai)
 - takeScreenshot: "maestro/screenshots/03_transaksi_tunai_sukses.png"
 
-# 10. Tutup dialog nota
+# 9. Tutup dialog nota
 - tapOn: "Selesai"

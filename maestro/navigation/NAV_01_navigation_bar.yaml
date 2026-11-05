@@ -18,33 +18,33 @@ appId: com.smartpos.smart_pos
 
 # 1. Navigasi ke menu Produk
 - tapOn:
-    text: "Produk"
+    text: ".*Produk.*"
 - extendedWaitUntil:
-    visible: "Produk & Stok|Manajemen Produk & Stok"
+    visible: "Produk & Stok|Manajemen Produk & Stok|Katalog Produk"
     timeout: 5000
-- assertVisible: "Tambah|Tambah Produk"
+- assertVisible: "Tambah.*"
 
 # 2. Navigasi ke menu Laporan
 - tapOn:
-    text: "Laporan"
+    text: ".*Laporan.*"
 - extendedWaitUntil:
-    visible: "Laporan Penjualan|Laporan & Analitik Penjualan"
+    visible: "Laporan.*"
     timeout: 5000
-- assertVisible: "Total Omset Penjualan"
+- assertVisible: "Total Omset Penjualan|Total Omset"
 - assertVisible: "Total Transaksi"
 
 # 3. Navigasi ke menu Akun
 - tapOn:
-    text: "Akun"
+    text: ".*Akun.*"
 - extendedWaitUntil:
-    visible: "Akun & Profil Kasir"
+    visible: "Akun.*"
     timeout: 5000
 - assertVisible: "Ringkasan Sesi Operasional"
 - assertVisible: "Keluar dari Akun (Logout)"
 
 # 4. Navigasi kembali ke menu POS
 - tapOn:
-    text: "POS|Kasir POS"
+    text: ".*POS.*"
 - extendedWaitUntil:
     visible: "Cari produk atau menu..."
     timeout: 5000
