@@ -15,7 +15,6 @@ appId: com.smartpos.smart_pos
 
 # Pastikan aplikasi aktif dan di halaman POS
 - runFlow: ../common/ensure_logged_in.yaml
-- tapOn: "POS"
 
 # 1. Tambah produk ke keranjang
 - tapOn:

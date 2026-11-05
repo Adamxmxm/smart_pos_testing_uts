@@ -14,7 +14,6 @@ appId: com.smartpos.smart_pos
 
 # Pastikan aplikasi aktif dan di halaman POS
 - runFlow: ../common/ensure_logged_in.yaml
-- tapOn: "POS"
 
 # 1. Buka dialog Daftar Open Nota
 # Coba klik tombol Open Nota pada AppBar atau CartPanel
