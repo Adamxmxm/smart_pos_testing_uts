@@ -16,7 +16,7 @@
 | **Nama Mahasiswa** | AFIF ADAM MUGHNANSYAH |
 | **NIM** | 230103184 |
 | **Peran** | Mobile App Developer & QA / Automated Tester |
-| **Tautan Repository Git** | `[Isi tautan GitHub / GitLab Anda di sini]` |
+| **Tautan Repository Git** | https://github.com/Adamxmxm/smart_pos_testing_uts |
 | **Tautan Video Penjelasan** | `[Isi tautan video demonstrasi (durasi 5–10 menit) di sini]` |
 
 ---
