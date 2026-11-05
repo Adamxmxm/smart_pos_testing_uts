@@ -14,7 +14,7 @@ appId: com.smartpos.smart_pos
 # ==============================================================================
 
 # Pastikan aplikasi aktif dan sudah login
-- runFlow: ../common/ensure_logged_in.yaml
+# - runFlow: ../common/ensure_logged_in.yaml
 
 # 1. Navigasi ke menu Produk
 - tapOn: "Produk"

@@ -16,14 +16,14 @@ appId: com.smartpos.smart_pos
 
 # 2. Input Email Kasir
 - tapOn:
-    text: "nama@domain.com"
+    below: "Alamat Email"
 - eraseText: 50
 - inputText: "afifadam707@gmail.com"
 - hideKeyboard
 
 # 3. Input Password
 - tapOn:
-    text: "••••••••"
+    below: "Kata Sandi"
 - eraseText: 50
 - inputText: "12345678"
 - hideKeyboard

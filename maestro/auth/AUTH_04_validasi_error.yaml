@@ -32,7 +32,7 @@ appId: com.smartpos.smart_pos
 
 # 3. Skenario Kesalahan 2: Format Email Tidak Valid
 - tapOn:
-    text: "nama@domain.com"
+    below: "Alamat Email"
 - inputText: "kasirinvalidformat"
 - hideKeyboard
 
@@ -44,7 +44,7 @@ appId: com.smartpos.smart_pos
 
 # 4. Skenario Kesalahan 3: Password Kurang dari 6 Karakter
 - tapOn:
-    text: "••••••••"
+    below: "Kata Sandi"
 - inputText: "123"
 - hideKeyboard
 
@@ -56,13 +56,13 @@ appId: com.smartpos.smart_pos
 
 # 5. Skenario Kesalahan 4: Kredensial Salah (Email/Password Tidak Terdaftar)
 - tapOn:
-    text: "kasirinvalidformat"
+    below: "Alamat Email"
 - eraseText: 50
 - inputText: "akun.palsu@pos.com"
 - hideKeyboard
 
 - tapOn:
-    text: "••••••••"
+    below: "Kata Sandi"
 - eraseText: 50
 - inputText: "passwordsalah123"
 - hideKeyboard
@@ -75,4 +75,3 @@ appId: com.smartpos.smart_pos
     timeout: 8000
 - assertVisible: ".*salah.*|.*gagal.*|.*Login gagal.*"
 - takeScreenshot: "maestro/screenshots/04_error_kredensial_salah.png"
-
