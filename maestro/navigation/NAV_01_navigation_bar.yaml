@@ -7,60 +7,45 @@ appId: com.smartpos.smart_pos
 # ==============================================================================
 
 # 1. Navigasi ke menu Produk (Tab 2)
-- tapOn:
-    text: ".*Produk.*"
-    optional: true
-- tapOn:
-    point: "37%,96%"
-    optional: true
+- tapOn: "Produk"
 
-# Verifikasi halaman Produk terbuka
+# Verifikasi halaman Produk & Stok terbuka
 - extendedWaitUntil:
-    visible: "Tambah.*|Katalog Produk|Produk & Stok|Cari produk.*"
+    visible: "Produk & Stok|Manajemen Produk|Tambah"
     timeout: 6000
-- assertVisible: "Tambah.*|Produk.*|Cari produk.*"
+
+- assertVisible: "Tambah|Tambah Produk"
 
 # 2. Navigasi ke menu Laporan (Tab 3)
-- tapOn:
-    text: ".*Laporan.*"
-    optional: true
-- tapOn:
-    point: "62%,96%"
-    optional: true
+- tapOn: "Laporan"
 
 # Verifikasi halaman Laporan terbuka
 - extendedWaitUntil:
-    visible: "Laporan.*|Total Omset.*|Total Transaksi|Hari Ini"
+    visible: "Total Omset Penjualan|Total Transaksi"
     timeout: 6000
-- assertVisible: "Total Omset.*|Total Transaksi|Hari Ini"
+
+- assertVisible: "Total Omset Penjualan"
+- assertVisible: "Total Transaksi"
 
 # 3. Navigasi ke menu Akun (Tab 4)
-- tapOn:
-    text: ".*Akun.*"
-    optional: true
-- tapOn:
-    point: "87%,96%"
-    optional: true
+- tapOn: "Akun"
 
 # Verifikasi halaman Akun terbuka
 - extendedWaitUntil:
-    visible: "Akun.*|Keluar.*|Ringkasan Sesi.*"
+    visible: "Akun & Profil Kasir|Ringkasan Sesi Operasional"
     timeout: 6000
-- assertVisible: "Keluar.*|Ringkasan Sesi.*"
+
+- assertVisible: "Ringkasan Sesi Operasional"
 
 # 4. Navigasi kembali ke menu POS (Tab 1)
-- tapOn:
-    text: ".*POS.*"
-    optional: true
-- tapOn:
-    point: "12%,96%"
-    optional: true
+- tapOn: "POS"
 
 # Verifikasi kembali ke halaman POS
 - extendedWaitUntil:
-    visible: "Cari produk.*|Semua|SMART POS"
+    visible: "Cari produk atau menu...|Semua"
     timeout: 6000
-- assertVisible: "Semua|Cari produk.*"
+
+- assertVisible: "Semua"
 
 # 5. Screenshot bukti pengujian navigasi
 - takeScreenshot: "maestro/screenshots/02_navigation_pos.png"

@@ -2,76 +2,70 @@ appId: com.smartpos.smart_pos
 ---
 # ==============================================================================
 # UAT Test Case: PAY-02
-# Modul: Pembayaran Non-Tunai
-# Deskripsi: Skenario checkout QRIS / EDC / Transfer
-# Langkah:
-#   1. Pastikan item ada di keranjang (tambahkan item)
-#   2. Klik 'Non-Tunai'
-#   3. Pilih metode Non-Tunai (QRIS / EDC / Transfer)
-#   4. Konfirmasi pembayaran lunas
-# Hasil Diharapkan:
-#   Status transaksi berubah menjadi 'completed' tanpa kalkulasi kembalian,
-#   dialog 'Nota Transaksi' (Receipt Preview) muncul.
+# Modul: Pembayaran Non-Tunai (QRIS / EDC)
+# Deskripsi: Alur checkout transaksi kasir non-tunai
 # ==============================================================================
 
-# Pastikan aplikasi aktif dan di halaman POS
-- runFlow: ../common/ensure_logged_in.yaml
+# 1. Pastikan di tab POS
+- runFlow:
+    when:
+      notVisible: "Cari produk atau menu..."
+    commands:
+      - tapOn: "POS"
 
-# 1. Tambah produk ke keranjang belanja
+- extendedWaitUntil:
+    visible: "Cari produk atau menu...|Semua"
+    timeout: 8000
+
+# 2. Tap kartu produk di katalog
 - tapOn:
     text: "Stok:.*|Rp.*"
 
+# 3. Tunggu modal tambah produk dan klik tombol 'Tambah (...)'
 - extendedWaitUntil:
     visible: "Tambah.*"
     timeout: 5000
 
-- tapOn:
-    text: "Tambah.*"
+- tapOn: "Tambah.*"
 
-# 2. Buka keranjang belanja jika di mobile
+# 4. Buka keranjang belanja jika di mobile
 - runFlow:
     when:
-      notVisible: "Total Tagihan"
+      notVisible: "Non-Tunai"
     commands:
       - tapOn:
           text: ".*Item • Rp.*"
-          optional: true
-      - tapOn:
-          text: "Keranjang.*"
-          optional: true
-      - tapOn:
-          point: "85%,5%"
-          optional: true
 
-# 3. Verifikasi keranjang dan klik tombol 'Non-Tunai'
+# 5. Tunggu keranjang terbuka & klik 'Non-Tunai'
 - extendedWaitUntil:
-    visible: "Total Tagihan|Non-Tunai"
-    timeout: 6000
+    visible: "Non-Tunai|Total Tagihan"
+    timeout: 7000
+
+- assertVisible: "Total Tagihan"
 
 - tapOn: "Non-Tunai"
 
-# 4. Verifikasi modal Proses Pembayaran terbuka pada tab Non-Tunai
+# 6. Verifikasi dialog Proses Pembayaran terbuka pada tab Non-Tunai
 - extendedWaitUntil:
-    visible: "Proses Pembayaran|Non-Tunai|QRIS"
-    timeout: 5000
+    visible: "Proses Pembayaran|QRIS|Mesin EDC"
+    timeout: 7000
 
-- assertVisible: "Non-Tunai"
+# 7. Pilih metode QRIS
+- tapOn: "QRIS"
 
-# 5. Pilih metode pembayaran: QRIS (default) atau Mesin EDC
-- tapOn:
-    text: "QRIS"
-    optional: true
-
-# 6. Klik tombol konfirmasi pembayaran non-tunai
+# 8. Klik tombol konfirmasi pembayaran non-tunai
 - tapOn: "Konfirmasi Bayar.*"
 
-# 7. Verifikasi transaksi 'completed' dan dialog 'Nota Transaksi' muncul
+# 9. Verifikasi dialog Nota Transaksi muncul
 - extendedWaitUntil:
-    visible: "Nota Transaksi|Cetak Nota"
+    visible: "Nota Transaksi|Cetak Nota|Selesai"
     timeout: 10000
 
 - assertVisible: "Cetak Nota"
 - assertVisible: "Selesai"
 
-# 8. Tutup dialog nota
+# 10. Screenshot bukti transaksi non-tunai sukses
+- takeScreenshot: maestro/screenshots/PAY_02_non_tunai_sukses.png
+
+# 11. Tutup dialog nota
 - tapOn: "Selesai"

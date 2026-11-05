@@ -6,96 +6,66 @@ appId: com.smartpos.smart_pos
 # Deskripsi: Alur checkout transaksi kasir pembayaran tunai hingga cetak nota
 # ==============================================================================
 
-# 1. Pastikan berada di layar katalog POS (Tab 1)
-- tapOn:
-    text: ".*POS.*"
-    optional: true
-- tapOn:
-    point: "12%,96%"
-    optional: true
+# 1. Pastikan di tab POS
+- runFlow:
+    when:
+      notVisible: "Cari produk atau menu..."
+    commands:
+      - tapOn: "POS"
 
 - extendedWaitUntil:
-    visible: "Cari produk.*|Semua|SMART POS"
+    visible: "Cari produk atau menu...|Semua"
     timeout: 8000
 
-# 2. Tap kartu produk pertama di katalog
+# 2. Tap kartu produk di katalog
 - tapOn:
     text: "Stok:.*|Rp.*"
-    optional: true
-- tapOn:
-    point: "25%,35%"
-    optional: true
 
 # 3. Tunggu modal tambah produk dan klik tombol 'Tambah (...)'
 - extendedWaitUntil:
     visible: "Tambah.*"
     timeout: 5000
 
-- tapOn:
-    text: "Tambah.*"
-    optional: true
-- tapOn:
-    point: "50%,92%"
-    optional: true
+- tapOn: "Tambah.*"
 
-# 4. Buka keranjang belanja jika di smartphone
+# 4. Buka keranjang belanja jika di mobile (tap tombol floating keranjang)
 - runFlow:
     when:
       notVisible: "Bayar Tunai"
     commands:
       - tapOn:
           text: ".*Item • Rp.*"
-          optional: true
-      - tapOn:
-          point: "75%,88%"
-          optional: true
-      - tapOn:
-          point: "85%,7%"
-          optional: true
 
-# 5. Verifikasi keranjang dan klik tombol 'Bayar Tunai'
+# 5. Tunggu bottom sheet / cart panel terbuka
 - extendedWaitUntil:
-    visible: "Bayar Tunai|Total Tagihan|Keranjang"
-    timeout: 6000
+    visible: "Bayar Tunai|Total Tagihan"
+    timeout: 7000
 
-- tapOn:
-    text: "Bayar Tunai"
-    optional: true
-- tapOn:
-    point: "35%,95%"
-    optional: true
+- assertVisible: "Total Tagihan"
 
-# 6. Verifikasi dialog Proses Pembayaran terbuka
+# 6. Klik tombol 'Bayar Tunai'
+- tapOn: "Bayar Tunai"
+
+# 7. Verifikasi dialog Proses Pembayaran terbuka
 - extendedWaitUntil:
-    visible: "Proses Pembayaran|Selesaikan Pembayaran Tunai|Uang Pas"
-    timeout: 6000
+    visible: "Proses Pembayaran|Selesaikan Pembayaran Tunai"
+    timeout: 7000
 
-# 7. Pilih tombol preset 'Uang Pas' lalu klik 'Selesaikan Pembayaran Tunai'
-- tapOn:
-    text: "Uang Pas"
-    optional: true
+# 8. Pilih preset 'Uang Pas' lalu klik 'Selesaikan Pembayaran Tunai'
+- tapOn: "Uang Pas"
 
-- tapOn:
-    text: "Selesaikan Pembayaran Tunai"
-    optional: true
-- tapOn:
-    point: "50%,92%"
-    optional: true
+- tapOn: "Selesaikan Pembayaran Tunai"
 
-# 8. Verifikasi transaksi 'completed' dan dialog Nota Transaksi muncul
+# 9. Verifikasi dialog Nota Transaksi muncul
 - extendedWaitUntil:
     visible: "Nota Transaksi|Cetak Nota|Selesai"
     timeout: 10000
 
-- assertVisible: "Cetak Nota|Selesai"
+- assertVisible: "Cetak Nota"
+- assertVisible: "Selesai"
 
-# 9. Screenshot bukti transaksi selesai
-- takeScreenshot: "maestro/screenshots/03_transaksi_tunai_sukses.png"
+# 10. Screenshot bukti transaksi selesai
+- takeScreenshot: maestro/screenshots/PAY_01_tunai_sukses.png
 
-# 10. Tutup dialog nota (klik 'Selesai')
-- tapOn:
-    text: "Selesai"
-    optional: true
-- tapOn:
-    point: "25%,94%"
-    optional: true
+# 11. Tutup dialog nota
+- tapOn: "Selesai"

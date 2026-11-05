@@ -4,46 +4,30 @@ appId: com.smartpos.smart_pos
 # UAT Test Case: ACC-01
 # Modul: Akun & Logout Kasir
 # Deskripsi: Verifikasi profil kasir dan proses logout dari aplikasi
-# Langkah:
-#   1. Buka menu Akun di Navbar
-#   2. Verifikasi profil kasir dan ringkasan sesi operasional
-#   3. Klik tombol 'Keluar dari Akun (Logout)'
-#   4. Verifikasi dialog konfirmasi muncul lalu BATALKAN (tidak benar-benar logout)
-# Hasil Diharapkan:
-#   Dialog logout tampil dengan benar, tap Batal kembali ke layar Akun.
 # ==============================================================================
 
-# Pastikan aplikasi aktif dan sudah login
-- runFlow: ../common/ensure_logged_in.yaml
+# 1. Navigasi ke tab Akun
+- tapOn: "Akun"
 
-# 1. Navigasi ke tab Akun (text + koordinat fallback)
-- tapOn:
-    text: "Akun"
-    optional: true
-- tapOn:
-    point: "87%,96%"
-    optional: true
-
-# 2. Tunggu layar Akun terbuka
 - extendedWaitUntil:
-    visible: "Akun & Profil Kasir"
+    visible: "Akun & Profil Kasir|Ringkasan Sesi Operasional"
     timeout: 6000
 
-# 3. Verifikasi komponen profil & sesi kasir
+# 2. Verifikasi komponen profil kasir
 - assertVisible: "Ringkasan Sesi Operasional"
 - assertVisible: "Versi Aplikasi"
 
-# 4. Scroll ke bawah untuk memastikan tombol logout terlihat
+# 3. Scroll ke tombol logout
 - scrollUntilVisible:
     element:
       text: "Keluar dari Akun (Logout)"
     direction: DOWN
     timeout: 4000
 
-# 5. Klik tombol logout
+# 4. Klik tombol logout
 - tapOn: "Keluar dari Akun (Logout)"
 
-# 6. Verifikasi dialog konfirmasi logout muncul
+# 5. Verifikasi dialog konfirmasi logout muncul
 - extendedWaitUntil:
     visible: "Keluar Akun Kasir?"
     timeout: 5000
@@ -51,13 +35,13 @@ appId: com.smartpos.smart_pos
 - assertVisible: "Batal"
 - assertVisible: "Ya, Keluar"
 
-# 7. Screenshot dialog konfirmasi
+# 6. Screenshot dialog konfirmasi
 - takeScreenshot: maestro/screenshots/ACC_01_logout_dialog.png
 
-# 8. BATALKAN logout (tap Batal — tidak benar-benar logout agar test lain bisa jalan)
+# 7. BATALKAN logout agar sesi tetap login
 - tapOn: "Batal"
 
-# 9. Verifikasi kembali ke layar Akun
+# 8. Verifikasi kembali ke layar Akun
 - extendedWaitUntil:
     visible: "Keluar dari Akun (Logout)"
     timeout: 5000
