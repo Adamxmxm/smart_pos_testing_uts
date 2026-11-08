@@ -29,13 +29,14 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   void _handleLogin() async {
     if (!_formKey.currentState!.validate()) return;
 
-    final success = await ref.read(authProvider.notifier).signIn(
-          _emailController.text.trim(),
-          _passwordController.text.trim(),
-        );
+    final success = await ref
+        .read(authProvider.notifier)
+        .signIn(_emailController.text.trim(), _passwordController.text.trim());
 
     if (!success && mounted) {
-      final error = ref.read(authProvider).errorMessage ?? 'Login gagal. Cek kembali data Anda.';
+      final error =
+          ref.read(authProvider).errorMessage ??
+          'Login gagal. Cek kembali data Anda.';
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(error),
@@ -78,7 +79,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           fontSize: 22,
                           showSubtitle: false,
                         ),
-                      ).animate().scale(duration: 400.ms, curve: Curves.easeOut),
+                      ).animate().scale(
+                        duration: 400.ms,
+                        curve: Curves.easeOut,
+                      ),
 
                       const SizedBox(height: 18),
 
@@ -118,11 +122,17 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         keyboardType: TextInputType.emailAddress,
                         decoration: const InputDecoration(
                           hintText: 'nama@domain.com',
-                          prefixIcon: Icon(Icons.email_outlined, color: AppColors.textMuted, size: 20),
+                          prefixIcon: Icon(
+                            Icons.email_outlined,
+                            color: AppColors.textMuted,
+                            size: 20,
+                          ),
                         ),
                         validator: (v) {
-                          if (v == null || v.trim().isEmpty) return 'Email wajib diisi';
-                          if (!v.contains('@')) return 'Format email tidak valid';
+                          if (v == null || v.trim().isEmpty)
+                            return 'Email wajib diisi';
+                          if (!v.contains('@'))
+                            return 'Format email tidak valid';
                           return null;
                         },
                       ),
@@ -144,10 +154,16 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         obscureText: _obscurePassword,
                         decoration: InputDecoration(
                           hintText: '••••••••',
-                          prefixIcon: const Icon(Icons.lock_outline_rounded, color: AppColors.textMuted, size: 20),
+                          prefixIcon: const Icon(
+                            Icons.lock_outline_rounded,
+                            color: AppColors.textMuted,
+                            size: 20,
+                          ),
                           suffixIcon: IconButton(
                             icon: Icon(
-                              _obscurePassword ? Icons.visibility_off_outlined : Icons.visibility_outlined,
+                              _obscurePassword
+                                  ? Icons.visibility_off_outlined
+                                  : Icons.visibility_outlined,
                               color: AppColors.textMuted,
                               size: 20,
                             ),
@@ -159,8 +175,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           ),
                         ),
                         validator: (v) {
-                          if (v == null || v.isEmpty) return 'Password wajib diisi';
-                          if (v.length < 6) return 'Password minimal 6 karakter';
+                          if (v == null || v.isEmpty)
+                            return 'Password wajib diisi';
+                          if (v.length < 6)
+                            return 'Password minimal 6 karakter';
                           return null;
                         },
                       ),
@@ -190,13 +208,18 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         children: [
                           const Text(
                             'Belum punya akun kasir? ',
-                            style: TextStyle(color: AppColors.textMuted, fontSize: 13),
+                            style: TextStyle(
+                              color: AppColors.textMuted,
+                              fontSize: 13,
+                            ),
                           ),
                           GestureDetector(
                             onTap: () {
                               Navigator.push(
                                 context,
-                                MaterialPageRoute(builder: (_) => const RegisterScreen()),
+                                MaterialPageRoute(
+                                  builder: (_) => const RegisterScreen(),
+                                ),
                               );
                             },
                             child: const Text(

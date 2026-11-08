@@ -380,19 +380,24 @@ class _CartPanelState extends ConsumerState<CartPanel> {
                               ),
                               Semantics(
                                 identifier: 'btn_qty_tambah_$index',
-                                child: InkWell(
-                                onTap: () => ref.read(cartProvider.notifier).incrementQuantity(item.productId, maxStock: stock),
-                                borderRadius: BorderRadius.circular(6),
-                                child: Container(
-                                  width: 28,
-                                  height: 28,
-                                  decoration: BoxDecoration(
-                                    color: AppColors.surfaceMuted,
+                                label: 'Tambah Kuantitas',
+                                button: true,
+                                child: Tooltip(
+                                  message: 'Tambah Kuantitas',
+                                  child: InkWell(
+                                    onTap: () => ref.read(cartProvider.notifier).incrementQuantity(item.productId, maxStock: stock),
                                     borderRadius: BorderRadius.circular(6),
-                                    border: Border.all(color: AppColors.border),
+                                    child: Container(
+                                      width: 28,
+                                      height: 28,
+                                      decoration: BoxDecoration(
+                                        color: AppColors.surfaceMuted,
+                                        borderRadius: BorderRadius.circular(6),
+                                        border: Border.all(color: AppColors.border),
+                                      ),
+                                      child: const Icon(Icons.add_rounded, size: 16, color: AppColors.textDark),
+                                    ),
                                   ),
-                                  child: const Icon(Icons.add_rounded, size: 16, color: AppColors.textDark),
-                                ),
                                 ),
                               ),
                             ],
