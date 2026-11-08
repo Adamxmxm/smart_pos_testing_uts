@@ -678,7 +678,9 @@ class _AddToCartModalState extends ConsumerState<AddToCartModal> {
               // Action CTA Button
               Padding(
                 padding: const EdgeInsets.fromLTRB(14, 4, 14, 14),
-                child: ElevatedButton(
+                child: Semantics(
+                  identifier: 'btn_tambah_ke_keranjang',
+                  child: ElevatedButton(
                   onPressed: (isOutOfStock || _quantity <= 0) ? null : _submitAddToCart,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.accentOrange,
@@ -704,6 +706,7 @@ class _AddToCartModalState extends ConsumerState<AddToCartModal> {
                       ),
                     ],
                   ),
+                ),
                 ),
               ),
             ],

@@ -1,0 +1,179 @@
+appId: com.smartpos.smart_pos
+---
+# ==============================================================================
+# MASTER E2E TEST: TOKAPOS - TRANSAKSI PENJUALAN KASIR END-TO-END
+# ==============================================================================
+
+# Pastikan aplikasi aktif di layar
+- launchApp:
+    clearState: false
+
+# ----------------- 1. CEK LOGIN & PASTIKAN DI TAB POS -----------------
+- runFlow:
+    when:
+      visible: "Masuk ke TokaPOS|Masuk ke Smart POS"
+    commands:
+      - tapOn:
+          below: "Alamat Email"
+      - eraseText: 50
+      - inputText: "afifadam707@gmail.com"
+      - hideKeyboard
+      - tapOn:
+          below: "Kata Sandi"
+      - eraseText: 50
+      - inputText: "12345678"
+      - hideKeyboard
+      - tapOn: "Masuk Sekarang"
+
+- runFlow:
+    when:
+      notVisible: "Cari produk atau menu..."
+    commands:
+      - tapOn: ".*POS.*"
+
+- extendedWaitUntil:
+    visible: "Cari produk atau menu...|Semua"
+    timeout: 8000
+
+# ----------------- 2. PILIH PRODUK 1 (Card 1 -> Modal -> Tambah) -----------------
+- tapOn:
+    point: "25%,35%"
+
+- extendedWaitUntil:
+    visible: "Tambah.*"
+    timeout: 5000
+
+- tapOn: "Tambah.*"
+- waitForAnimationToEnd:
+    timeout: 1500
+
+# ----------------- 3. PILIH PRODUK 2 (Card 2 -> Modal -> Tambah) -----------------
+- tapOn:
+    point: "75%,35%"
+
+- extendedWaitUntil:
+    visible: "Tambah.*"
+    timeout: 5000
+
+- tapOn: "Tambah.*"
+- waitForAnimationToEnd:
+    timeout: 1500
+
+# ----------------- 4. PILIH PRODUK 3 (Card 3 -> Modal -> Tambah) -----------------
+- tapOn:
+    point: "25%,65%"
+
+- extendedWaitUntil:
+    visible: "Tambah.*"
+    timeout: 5000
+
+- tapOn: "Tambah.*"
+- waitForAnimationToEnd:
+    timeout: 1500
+
+# ----------------- 5. VIEW ITEM & BUKA KERANJANG BELANJA -----------------
+- runFlow:
+    when:
+      notVisible: "Simpan Tagihan.*"
+    commands:
+      - tapOn:
+          text: ".*Item.*"
+          optional: true
+      - tapOn:
+          point: "50%,92%"
+          optional: true
+
+- extendedWaitUntil:
+    visible: "Simpan Tagihan.*|Total Tagihan"
+    timeout: 7000
+
+- assertVisible: "Total Tagihan"
+- assertVisible: "Simpan Tagihan.*"
+- takeScreenshot: "maestro/screenshots/e2e_01_keranjang_3_produk"
+
+# ----------------- 6. PROSES PEMBAYARAN TUNAI -----------------
+# Tombol "Bayar Tunai" tidak terbaca sebagai teks, jadi diambil secara relatif:
+# elemen yang posisinya DI BAWAH "Simpan Tagihan" (sisi kiri, Non-Tunai di kanan).
+# Karena strictly "below", tap ini tidak akan pernah mengenai Simpan Tagihan.
+- tapOn:
+    below: "Simpan Tagihan.*"
+    index: 0
+    optional: true
+
+# Fallback 1: kalau belum pindah ke layar pembayaran, tap pakai persen (lebih bawah dari Simpan Tagihan)
+- runFlow:
+    when:
+      notVisible: "Proses Pembayaran|Selesaikan Pembayaran Tunai|Uang Diterima"
+    commands:
+      - tapOn:
+          point: "27%,97%"
+          optional: true
+
+# Fallback 2: coba sedikit lebih atas
+- runFlow:
+    when:
+      notVisible: "Proses Pembayaran|Selesaikan Pembayaran Tunai|Uang Diterima"
+    commands:
+      - tapOn:
+          point: "27%,93%"
+          optional: true
+
+- extendedWaitUntil:
+    visible: "Proses Pembayaran|Selesaikan Pembayaran Tunai|Uang Diterima"
+    timeout: 7000
+
+# ----------------- 7. PEMBAYARAN DENGAN KEMBALIAN (RP 100.000) -----------------
+- tapOn:
+    text: "Rp 100k"
+    optional: true
+
+# Fallback jika preset Rp 100k tidak ter-tap
+- runFlow:
+    when:
+      notVisible: "Kembalian:"
+    commands:
+      - tapOn: "Uang Diterima (Rp)"
+      - eraseText: 20
+      - inputText: "100000"
+      - hideKeyboard
+
+- extendedWaitUntil:
+    visible: "Kembalian:"
+    timeout: 5000
+
+- assertVisible: "Kembalian:"
+- takeScreenshot: "maestro/screenshots/e2e_02_pembayaran_kembalian"
+
+- tapOn: "Selesaikan Pembayaran Tunai"
+
+# ----------------- 8. DIALOG NOTA TRANSAKSI & CETAK STRUK -----------------
+- extendedWaitUntil:
+    visible: "Cetak Nota|Selesai"
+    timeout: 10000
+
+- tapOn: "Cetak Nota"
+- waitForAnimationToEnd:
+    timeout: 2500
+
+# Back pertama: tutup layar/dialog cetak struk
+- back
+- waitForAnimationToEnd:
+    timeout: 1500
+
+# Back kedua: tutup dialog nota transaksi
+- back
+- waitForAnimationToEnd:
+    timeout: 1500
+
+# Finish: klik Selesai jika masih tampil
+- tapOn:
+    text: "Selesai"
+    optional: true
+
+# ----------------- 9. SELESAI & KEMBALI KE POS -----------------
+- extendedWaitUntil:
+    visible: "Cari produk atau menu...|Semua"
+    timeout: 6000
+
+- assertVisible: "Semua"
+- takeScreenshot: "maestro/screenshots/e2e_05_transaksi_sukses_selesai"

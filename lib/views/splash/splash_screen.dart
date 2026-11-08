@@ -21,8 +21,8 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
   }
 
   void _startTimer() async {
-    // Supabase already initialized in main() — just show animation
-    await Future.delayed(const Duration(milliseconds: 1800));
+    // Show splash animation smoothly then transition
+    await Future.delayed(const Duration(milliseconds: 2200));
     if (mounted) {
       widget.onSplashFinished();
     }
@@ -31,51 +31,151 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.primaryNavy,
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            // Animated App Logo with Scale & Fade Up
-            SmartPosLogoIcon(
-              size: 110,
-              navyColor: Colors.white,
-              orangeColor: AppColors.accentOrange,
-            )
-                .animate()
-                .scale(
-                  duration: 800.ms,
-                  curve: Curves.easeOutBack,
-                  begin: const Offset(0.4, 0.4),
-                  end: const Offset(1.0, 1.0),
-                )
-                .fadeIn(duration: 600.ms),
-
-            const SizedBox(height: 28),
-
-            // Title
-            const SmartPosLogo(
-              iconSize: 0,
-              fontSize: 32,
-              isDarkBackground: true,
-              showSubtitle: true,
-            )
-                .animate()
-                .fadeIn(delay: 300.ms, duration: 600.ms)
-                .slideY(begin: 0.3, end: 0, curve: Curves.easeOut),
-
-            const SizedBox(height: 48),
-
-            // Circular progress indicator with orange accent
-            SizedBox(
-              width: 28,
-              height: 28,
-              child: CircularProgressIndicator(
-                strokeWidth: 2.5,
-                valueColor: AlwaysStoppedAnimation<Color>(AppColors.accentOrange),
+      backgroundColor: const Color(0xFF0C2340), // Premium Dark Navy
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              Color(0xFF0C2340), // Deep TokaPOS Navy
+              Color(0xFF071526), // Darker base
+            ],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+          ),
+        ),
+        child: SafeArea(
+          child: Stack(
+            children: [
+              // Decorative background glow
+              Positioned(
+                top: -60,
+                right: -60,
+                child: Container(
+                  width: 220,
+                  height: 220,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: AppColors.accentOrange.withValues(alpha: 0.12),
+                  ),
+                ),
               ),
-            ).animate().fadeIn(delay: 700.ms, duration: 400.ms),
-          ],
+
+              Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    // TokaPOS App Badge Card with 3D drop shadow
+                    Container(
+                      width: 140,
+                      height: 140,
+                      padding: const EdgeInsets.all(18),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(32),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.25),
+                            blurRadius: 28,
+                            offset: const Offset(0, 10),
+                          ),
+                          BoxShadow(
+                            color: AppColors.accentOrange.withValues(alpha: 0.25),
+                            blurRadius: 20,
+                            offset: const Offset(0, 4),
+                          ),
+                        ],
+                      ),
+                      child: Image.asset(
+                        'assets/images/tokapos_icon.png',
+                        fit: BoxFit.contain,
+                      ),
+                    )
+                        .animate()
+                        .scale(
+                          duration: 850.ms,
+                          curve: Curves.easeOutBack,
+                          begin: const Offset(0.3, 0.3),
+                          end: const Offset(1.0, 1.0),
+                        )
+                        .fadeIn(duration: 600.ms)
+                        .shimmer(delay: 900.ms, duration: 1100.ms, color: Colors.white54),
+
+                    const SizedBox(height: 28),
+
+                    // TokaPOS Big Wordmark
+                    RichText(
+                      text: const TextSpan(
+                        style: TextStyle(
+                          fontSize: 34,
+                          fontWeight: FontWeight.w900,
+                          letterSpacing: -0.5,
+                        ),
+                        children: [
+                          TextSpan(
+                            text: 'Toka',
+                            style: TextStyle(color: Colors.white),
+                          ),
+                          TextSpan(
+                            text: 'POS',
+                            style: TextStyle(color: AppColors.accentOrange),
+                          ),
+                        ],
+                      ),
+                    )
+                        .animate()
+                        .fadeIn(delay: 350.ms, duration: 600.ms)
+                        .slideY(begin: 0.35, end: 0, curve: Curves.easeOutCubic),
+
+                    const SizedBox(height: 8),
+
+                    // Subtitle
+                    Text(
+                      'Sistem Kasir Pintar & Modern',
+                      style: TextStyle(
+                        fontSize: 13.5,
+                        color: Colors.white.withValues(alpha: 0.75),
+                        fontWeight: FontWeight.w500,
+                        letterSpacing: 0.8,
+                      ),
+                    )
+                        .animate()
+                        .fadeIn(delay: 500.ms, duration: 600.ms)
+                        .slideY(begin: 0.2, end: 0),
+
+                    const SizedBox(height: 48),
+
+                    // Modern Linear & Circular Loading Indicator
+                    SizedBox(
+                      width: 32,
+                      height: 32,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2.8,
+                        valueColor: AlwaysStoppedAnimation<Color>(AppColors.accentOrange),
+                      ),
+                    ).animate().fadeIn(delay: 750.ms, duration: 400.ms),
+                  ],
+                ),
+              ),
+
+              // Bottom footer tagline
+              Positioned(
+                bottom: 24,
+                left: 0,
+                right: 0,
+                child: Center(
+                  child: Text(
+                    'TokaPOS • Versi 1.2.0',
+                    style: TextStyle(
+                      fontSize: 11.5,
+                      color: Colors.white.withValues(alpha: 0.45),
+                      fontWeight: FontWeight.w500,
+                      letterSpacing: 0.5,
+                    ),
+                  ),
+                ),
+              ).animate().fadeIn(delay: 900.ms, duration: 500.ms),
+            ],
+          ),
         ),
       ),
     );

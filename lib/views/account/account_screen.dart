@@ -311,7 +311,7 @@ class AccountScreen extends ConsumerWidget {
                   _buildInfoTile(
                     icon: Icons.storefront_rounded,
                     title: 'Nama Toko / Outlet',
-                    value: 'Smart POS - Cabang Utama',
+                    value: 'TokaPOS - Cabang Utama',
                   ),
                   const Divider(height: 1),
                   _buildInfoTile(
@@ -329,7 +329,7 @@ class AccountScreen extends ConsumerWidget {
                   _buildInfoTile(
                     icon: Icons.info_outline_rounded,
                     title: 'Versi Aplikasi',
-                    value: 'Smart POS v1.2.0 (Mobile Ready)',
+                    value: 'TokaPOS v1.2.0 (Mobile Ready)',
                   ),
                 ],
               ),

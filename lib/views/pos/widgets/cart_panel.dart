@@ -97,6 +97,7 @@ class _CartPanelState extends ConsumerState<CartPanel> {
         customerName: customer,
         items: cartState.items,
         existingOrderId: cartState.activeOpenOrderId,
+        initialMethod: method,
       ),
     );
   }
@@ -247,7 +248,9 @@ class _CartPanelState extends ConsumerState<CartPanel> {
           // Input Nama Pelanggan / Nomor Meja
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
-            child: TextField(
+            child: Semantics(
+              identifier: 'input_nama_pelanggan',
+              child: TextField(
               controller: _customerController,
               decoration: const InputDecoration(
                 hintText: 'Nama Pelanggan / No. Meja (Opsional)',
@@ -258,6 +261,7 @@ class _CartPanelState extends ConsumerState<CartPanel> {
               onChanged: (val) {
                 ref.read(cartProvider.notifier).setCustomerName(val.trim());
               },
+            ),
             ),
           ),
 
@@ -338,7 +342,9 @@ class _CartPanelState extends ConsumerState<CartPanel> {
                           Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              InkWell(
+                              Semantics(
+                                identifier: 'btn_qty_kurang_$index',
+                                child: InkWell(
                                 onTap: () => ref.read(cartProvider.notifier).decrementQuantity(item.productId),
                                 borderRadius: BorderRadius.circular(6),
                                 child: Container(
@@ -350,6 +356,7 @@ class _CartPanelState extends ConsumerState<CartPanel> {
                                     border: Border.all(color: AppColors.border),
                                   ),
                                   child: const Icon(Icons.remove_rounded, size: 16, color: AppColors.textDark),
+                                ),
                                 ),
                               ),
                               InkWell(
@@ -371,7 +378,9 @@ class _CartPanelState extends ConsumerState<CartPanel> {
                                   ),
                                 ),
                               ),
-                              InkWell(
+                              Semantics(
+                                identifier: 'btn_qty_tambah_$index',
+                                child: InkWell(
                                 onTap: () => ref.read(cartProvider.notifier).incrementQuantity(item.productId, maxStock: stock),
                                 borderRadius: BorderRadius.circular(6),
                                 child: Container(
@@ -383,6 +392,7 @@ class _CartPanelState extends ConsumerState<CartPanel> {
                                     border: Border.all(color: AppColors.border),
                                   ),
                                   child: const Icon(Icons.add_rounded, size: 16, color: AppColors.textDark),
+                                ),
                                 ),
                               ),
                             ],
@@ -454,7 +464,9 @@ class _CartPanelState extends ConsumerState<CartPanel> {
                 // Open Nota Button (Yellow highlight)
                 SizedBox(
                   width: double.infinity,
-                  child: OutlinedButton.icon(
+                  child: Semantics(
+                    identifier: 'btn_simpan_tagihan',
+                    child: OutlinedButton.icon(
                     onPressed: cartState.isEmpty ? null : _saveToOpenNota,
                     style: OutlinedButton.styleFrom(
                       backgroundColor: AppColors.pastelYellowLight,
@@ -468,6 +480,7 @@ class _CartPanelState extends ConsumerState<CartPanel> {
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
                   ),
+                  ),
                 ),
 
                 const SizedBox(height: 8),
@@ -476,26 +489,34 @@ class _CartPanelState extends ConsumerState<CartPanel> {
                 Row(
                   children: [
                     Expanded(
-                      child: ElevatedButton.icon(
+                      child: Semantics(
+                        identifier: 'btn_bayar_tunai',
+                        child: ElevatedButton.icon(
                         onPressed: cartState.isEmpty ? null : () => _openPaymentModal(PaymentMethod.TUNAI),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.primaryNavy,
-                          padding: const EdgeInsets.symmetric(vertical: 13),
+                          padding: const EdgeInsets.symmetric(vertical: 15),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
                         ),
                         icon: const Icon(Icons.payments_rounded, size: 18),
                         label: const Text('Bayar Tunai'),
+                        ),
                       ),
                     ),
                     const SizedBox(width: 8),
                     Expanded(
-                      child: ElevatedButton.icon(
+                      child: Semantics(
+                        identifier: 'btn_non_tunai',
+                        child: ElevatedButton.icon(
                         onPressed: cartState.isEmpty ? null : () => _openPaymentModal(PaymentMethod.NON_TUNAI),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.accentOrange,
-                          padding: const EdgeInsets.symmetric(vertical: 13),
+                          padding: const EdgeInsets.symmetric(vertical: 15),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
                         ),
                         icon: const Icon(Icons.qr_code_rounded, size: 18),
                         label: const Text('Non-Tunai'),
+                        ),
                       ),
                     ),
                   ],

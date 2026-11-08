@@ -11,7 +11,7 @@ appId: com.smartpos.smart_pos
     clearState: false
 
 - extendedWaitUntil:
-    visible: "Masuk ke Smart POS"
+    visible: "Masuk ke TokaPOS|Masuk ke Smart POS"
     timeout: 8000
 
 # 2. Input Email Kasir
@@ -33,7 +33,7 @@ appId: com.smartpos.smart_pos
 
 # 5. Verifikasi berhasil masuk ke halaman utama POS
 - extendedWaitUntil:
-    visible: "SMART POS"
+    visible: "TokaPOS|SMART POS|Cari produk atau menu..."
     timeout: 10000
 
 - assertVisible: "Cari produk atau menu..."

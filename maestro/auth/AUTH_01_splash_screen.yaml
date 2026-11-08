@@ -18,20 +18,20 @@ appId: com.smartpos.smart_pos
 # 2. Tunggu proses Splash Screen & verifikasi transisi
 - extendedWaitUntil:
     visible:
-      text: "Smart POS"
+      text: "TokaPOS|Smart POS"
     timeout: 5000
 
 # 3. Tunggu hingga transisi ke LoginScreen atau POS Main Layout selesai
 - extendedWaitUntil:
     visible:
-      text: "Masuk ke Smart POS"
+      text: "Masuk ke TokaPOS|Masuk ke Smart POS"
       optional: true
     timeout: 8000
 
 # 4. Verifikasi salah satu state tercapai: Layar Login atau Layar Utama POS
 - assertTrue: ${output.isLoggedIn || true} # Maestro conditional check
 - assertVisible:
-    text: "Masuk ke Smart POS|POS"
+    text: "Masuk ke TokaPOS|Masuk ke Smart POS|POS"
 
 # 5. Dokumentasi hasil eksekusi (Screenshot bukti pengujian)
 - takeScreenshot: "maestro/screenshots/01_splash_screen.png"

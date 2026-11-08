@@ -67,7 +67,9 @@ class _PosMainLayoutState extends ConsumerState<PosMainLayout> {
         ),
         actions: [
           // Open Nota Icon Button (with count badge)
-          IconButton(
+          Semantics(
+            identifier: 'btn_open_nota_appbar',
+            child: IconButton(
             tooltip: 'Open Nota (${openNotaState.count})',
             icon: Stack(
               clipBehavior: Clip.none,
@@ -98,34 +100,8 @@ class _PosMainLayoutState extends ConsumerState<PosMainLayout> {
               );
             },
           ),
-
-          // Cart Icon Button (with item count badge)
-          IconButton(
-            tooltip: 'Keranjang (${cartState.totalItemCount})',
-            icon: Stack(
-              clipBehavior: Clip.none,
-              children: [
-                const Icon(Icons.shopping_bag_outlined, color: AppColors.primaryNavy, size: 22),
-                if (cartState.totalItemCount > 0)
-                  Positioned(
-                    top: -4,
-                    right: -6,
-                    child: Container(
-                      padding: const EdgeInsets.all(4),
-                      decoration: const BoxDecoration(
-                        color: AppColors.accentOrange,
-                        shape: BoxShape.circle,
-                      ),
-                      child: Text(
-                        '${cartState.totalItemCount}',
-                        style: const TextStyle(color: Colors.white, fontSize: 9.5, fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                  ),
-              ],
-            ),
-            onPressed: () => CartBottomSheet.show(context),
           ),
+
           const SizedBox(width: 4),
 
           // Connection status badge
@@ -160,49 +136,200 @@ class _PosMainLayoutState extends ConsumerState<PosMainLayout> {
         ],
       ),
       body: _buildCurrentScreen(isMobile: true),
-      bottomNavigationBar: MobileBottomNav(
-        currentIndex: _currentNavIndex,
-        onTap: (index) => setState(() => _currentNavIndex = index),
+      bottomNavigationBar: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (_currentNavIndex == 0) _buildMobileCartBar(cartState, openNotaState),
+          MobileBottomNav(
+            currentIndex: _currentNavIndex,
+            onTap: (index) => setState(() => _currentNavIndex = index),
+          ),
+        ],
       ),
-      floatingActionButton: _currentNavIndex == 0 && (cartState.totalItemCount > 0 || openNotaState.count > 0)
-          ? Container(
-              margin: const EdgeInsets.only(left: 32),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  if (openNotaState.count > 0 && cartState.isEmpty)
-                    FloatingActionButton.extended(
-                      heroTag: 'fab_open_nota',
-                      onPressed: () {
-                        showDialog(
-                          context: context,
-                          builder: (ctx) => const OpenNotaDialog(),
-                        );
-                      },
-                      backgroundColor: AppColors.pastelYellowLight,
-                      icon: const Icon(Icons.receipt_long_rounded, color: AppColors.primaryNavyDark),
-                      label: Text(
-                        'Open Nota (${openNotaState.count})',
-                        style: const TextStyle(fontWeight: FontWeight.bold, color: AppColors.primaryNavyDark, fontSize: 12.5),
-                      ),
-                    ),
-                  if (cartState.totalItemCount > 0) ...[
-                    const SizedBox(width: 8),
-                    FloatingActionButton.extended(
-                      heroTag: 'fab_cart',
-                      onPressed: () => CartBottomSheet.show(context),
-                      backgroundColor: AppColors.accentOrange,
-                      icon: const Icon(Icons.shopping_bag_outlined, color: Colors.white),
-                      label: Text(
-                        '${cartState.totalItemCount} Item • ${CurrencyFormatter.format(cartState.totalAmount)}',
-                        style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white, fontSize: 13),
-                      ),
-                    ),
-                  ],
+    );
+  }
+
+  // ================= BAR KERANJANG (mobile, di atas bottom nav) =================
+  Widget _buildMobileCartBar(dynamic cartState, dynamic openNotaState) {
+    final hasCart = cartState.totalItemCount > 0;
+    final hasOpenNota = openNotaState.count > 0;
+
+    Widget? bar;
+
+    if (hasCart) {
+      bar = Semantics(
+        identifier: 'btn_buka_keranjang',
+        child: Material(
+          key: const ValueKey('cart_bar'),
+          color: Colors.transparent,
+          child: InkWell(
+            onTap: () => CartBottomSheet.show(context),
+            borderRadius: BorderRadius.circular(18),
+            child: Ink(
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+              decoration: BoxDecoration(
+                gradient: const LinearGradient(
+                  colors: [AppColors.accentOrange, AppColors.accentOrangeDark],
+                  begin: Alignment.centerLeft,
+                  end: Alignment.centerRight,
+                ),
+                borderRadius: BorderRadius.circular(18),
+                boxShadow: [
+                  BoxShadow(
+                    color: AppColors.accentOrange.withValues(alpha: 0.35),
+                    blurRadius: 14,
+                    offset: const Offset(0, 5),
+                  ),
                 ],
               ),
-            )
-          : null,
+              child: Row(
+                children: [
+                  // Ikon keranjang + badge jumlah item
+                  Stack(
+                    clipBehavior: Clip.none,
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(9),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withValues(alpha: 0.2),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: const Icon(Icons.shopping_bag_rounded, color: Colors.white, size: 22),
+                      ),
+                      Positioned(
+                        top: -6,
+                        right: -6,
+                        child: TweenAnimationBuilder<double>(
+                          key: ValueKey(cartState.totalItemCount),
+                          tween: Tween(begin: 1.5, end: 1.0),
+                          duration: const Duration(milliseconds: 300),
+                          curve: Curves.elasticOut,
+                          builder: (context, scale, child) => Transform.scale(scale: scale, child: child),
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: Text(
+                              '${cartState.totalItemCount}',
+                              style: const TextStyle(
+                                color: AppColors.accentOrangeDark,
+                                fontSize: 11,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(width: 14),
+                  const Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          'Lihat Keranjang',
+                          style: TextStyle(color: Colors.white, fontSize: 14.5, fontWeight: FontWeight.bold),
+                        ),
+                        SizedBox(height: 2),
+                        Text(
+                          'Ketuk untuk bayar atau simpan nota',
+                          style: TextStyle(color: Colors.white70, fontSize: 11),
+                        ),
+                      ],
+                    ),
+                  ),
+                  AnimatedSwitcher(
+                    duration: const Duration(milliseconds: 250),
+                    transitionBuilder: (child, anim) => FadeTransition(
+                      opacity: anim,
+                      child: SlideTransition(
+                        position: Tween<Offset>(begin: const Offset(0, 0.4), end: Offset.zero).animate(anim),
+                        child: child,
+                      ),
+                    ),
+                    child: Text(
+                      CurrencyFormatter.format(cartState.totalAmount),
+                      key: ValueKey(cartState.totalAmount),
+                      style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  const SizedBox(width: 4),
+                  const Icon(Icons.keyboard_arrow_up_rounded, color: Colors.white, size: 24),
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+    } else if (hasOpenNota) {
+      bar = Semantics(
+        identifier: 'btn_buka_open_nota_bar',
+        child: Material(
+          key: const ValueKey('nota_bar'),
+          color: Colors.transparent,
+          child: InkWell(
+            onTap: () => showDialog(
+              context: context,
+              builder: (ctx) => const OpenNotaDialog(),
+            ),
+            borderRadius: BorderRadius.circular(16),
+            child: Ink(
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+              decoration: BoxDecoration(
+                color: AppColors.pastelYellowLight,
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(color: AppColors.pastelYellowDark, width: 1.2),
+              ),
+              child: Row(
+                children: [
+                  const Icon(Icons.receipt_long_rounded, color: AppColors.primaryNavyDark),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Text(
+                      '${openNotaState.count} Open Nota menunggu pembayaran',
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.primaryNavyDark,
+                        fontSize: 13,
+                      ),
+                    ),
+                  ),
+                  const Icon(Icons.chevron_right_rounded, color: AppColors.primaryNavyDark),
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+    }
+
+    return AnimatedSize(
+      duration: const Duration(milliseconds: 250),
+      curve: Curves.easeOut,
+      alignment: Alignment.bottomCenter,
+      child: AnimatedSwitcher(
+        duration: const Duration(milliseconds: 250),
+        transitionBuilder: (child, anim) => FadeTransition(
+          opacity: anim,
+          child: SlideTransition(
+            position: Tween<Offset>(begin: const Offset(0, 0.5), end: Offset.zero).animate(anim),
+            child: child,
+          ),
+        ),
+        child: bar == null
+            ? const SizedBox(key: ValueKey('no_bar'), width: double.infinity)
+            : Container(
+                key: ValueKey(hasCart ? 'wrap_cart' : 'wrap_nota'),
+                width: double.infinity,
+                color: AppColors.background,
+                padding: const EdgeInsets.fromLTRB(12, 8, 12, 8),
+                child: bar,
+              ),
+      ),
     );
   }
 

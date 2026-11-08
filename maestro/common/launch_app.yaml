@@ -9,6 +9,6 @@ appId: com.smartpos.smart_pos
 
 - extendedWaitUntil:
     visible:
-      text: "Masuk ke Smart POS"
+      text: "Masuk ke TokaPOS|Masuk ke Smart POS"
       optional: true
     timeout: 8000

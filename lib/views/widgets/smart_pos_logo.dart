@@ -1,175 +1,70 @@
 import 'package:flutter/material.dart';
 import '../../core/constants/app_colors.dart';
 
-class SmartPosLogoIcon extends StatelessWidget {
+/// TokaPOS Logo Icon Widget (Tablet + TK + Struk Graphic)
+class TokaPosLogoIcon extends StatelessWidget {
   final double size;
-  final Color navyColor;
-  final Color orangeColor;
+  final bool withBackground;
+  final Color? backgroundColor;
 
-  const SmartPosLogoIcon({
+  const TokaPosLogoIcon({
     super.key,
     this.size = 48,
-    this.navyColor = AppColors.primaryNavy,
-    this.orangeColor = AppColors.accentOrange,
+    this.withBackground = false,
+    this.backgroundColor,
   });
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
+    Widget icon = Image.asset(
+      'assets/images/tokapos_icon.png',
       width: size,
       height: size,
-      child: CustomPaint(
-        painter: _SmartPosLogoPainter(
-          navyColor: navyColor,
-          orangeColor: orangeColor,
-        ),
+      fit: BoxFit.contain,
+      errorBuilder: (ctx, err, stack) => Icon(
+        Icons.point_of_sale_rounded,
+        size: size,
+        color: AppColors.accentOrange,
       ),
     );
+
+    if (withBackground) {
+      return Container(
+        width: size * 1.25,
+        height: size * 1.25,
+        padding: EdgeInsets.all(size * 0.15),
+        decoration: BoxDecoration(
+          color: backgroundColor ?? Colors.white,
+          borderRadius: BorderRadius.circular(size * 0.28),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.12),
+              blurRadius: 14,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: icon,
+      );
+    }
+
+    return icon;
   }
 }
 
-class _SmartPosLogoPainter extends CustomPainter {
-  final Color navyColor;
-  final Color orangeColor;
+/// Backward compatibility alias
+typedef SmartPosLogoIcon = TokaPosLogoIcon;
 
-  _SmartPosLogoPainter({
-    required this.navyColor,
-    required this.orangeColor,
-  });
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final w = size.width;
-    final h = size.height;
-
-    final navyPaint = Paint()
-      ..color = navyColor
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = w * 0.08
-      ..strokeCap = StrokeCap.round
-      ..strokeJoin = StrokeJoin.round;
-
-    final navyFill = Paint()
-      ..color = navyColor
-      ..style = PaintingStyle.fill;
-
-    final orangePaint = Paint()
-      ..color = orangeColor
-      ..style = PaintingStyle.fill
-      ..strokeCap = StrokeCap.round;
-
-    final orangeStroke = Paint()
-      ..color = orangeColor
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = w * 0.075
-      ..strokeCap = StrokeCap.round;
-
-    // --- 1. Terminal Body (Tilted Navy POS Device) ---
-    final bodyRRect = RRect.fromRectAndRadius(
-      Rect.fromLTWH(w * 0.22, h * 0.26, w * 0.44, h * 0.58),
-      Radius.circular(w * 0.1),
-    );
-
-    canvas.save();
-    canvas.translate(w * 0.4, h * 0.55);
-    canvas.rotate(-0.20); // Slight tilt
-    canvas.translate(-w * 0.4, -h * 0.55);
-
-    // Terminal Outer Frame
-    canvas.drawRRect(bodyRRect, navyPaint);
-
-    // Terminal Display Screen (Top Half inside device)
-    final screenRRect = RRect.fromRectAndRadius(
-      Rect.fromLTWH(w * 0.27, h * 0.31, w * 0.34, h * 0.24),
-      Radius.circular(w * 0.04),
-    );
-    canvas.drawRRect(screenRRect, navyPaint);
-
-    // Checkmark inside screen
-    final checkPath = Path()
-      ..moveTo(w * 0.33, h * 0.42)
-      ..lineTo(w * 0.40, h * 0.48)
-      ..lineTo(w * 0.53, h * 0.35);
-    canvas.drawPath(checkPath, navyPaint..strokeWidth = w * 0.065);
-
-    // Keypad Grid (Bottom Half of terminal)
-    final keyRadius = w * 0.025;
-    canvas.drawCircle(Offset(w * 0.32, h * 0.62), keyRadius, navyFill);
-    canvas.drawCircle(Offset(w * 0.44, h * 0.62), keyRadius, navyFill);
-    canvas.drawCircle(Offset(w * 0.32, h * 0.70), keyRadius, navyFill);
-    canvas.drawCircle(Offset(w * 0.44, h * 0.70), keyRadius, navyFill);
-
-    // --- 2. Ascending Orange Arrow (Right side) ---
-    final arrowPath = Path()
-      ..moveTo(w * 0.52, h * 0.68)
-      ..lineTo(w * 0.76, h * 0.28);
-    canvas.drawPath(arrowPath, orangeStroke..strokeWidth = w * 0.11);
-
-    // Fill arrow head tip cleanly
-    final arrowHead = Path()
-      ..moveTo(w * 0.76, h * 0.26)
-      ..lineTo(w * 0.54, h * 0.28)
-      ..lineTo(w * 0.76, h * 0.48)
-      ..close();
-    canvas.drawPath(arrowHead, orangePaint);
-
-    // --- 3. Top Wi-Fi Signal Arcs with 'S' ---
-    final wifiCenter = Offset(w * 0.44, h * 0.16);
-
-    // Outer Arc
-    canvas.drawArc(
-      Rect.fromCircle(center: wifiCenter, radius: w * 0.18),
-      -2.4, 1.7, false,
-      orangeStroke..strokeWidth = w * 0.055,
-    );
-    // Inner Arc
-    canvas.drawArc(
-      Rect.fromCircle(center: wifiCenter, radius: w * 0.11),
-      -2.4, 1.7, false,
-      orangeStroke..strokeWidth = w * 0.05,
-    );
-
-    // Circle Badge with 'S' at center top
-    final badgeCenter = Offset(w * 0.44, h * 0.18);
-    canvas.drawCircle(badgeCenter, w * 0.065, orangePaint);
-
-    // Draw letter 'S' inside circle
-    final textPainter = TextPainter(
-      text: TextSpan(
-        text: 'S',
-        style: TextStyle(
-          color: Colors.white,
-          fontSize: w * 0.09,
-          fontWeight: FontWeight.bold,
-        ),
-      ),
-      textDirection: TextDirection.ltr,
-    );
-    textPainter.layout();
-    textPainter.paint(
-      canvas,
-      Offset(badgeCenter.dx - textPainter.width / 2, badgeCenter.dy - textPainter.height / 2),
-    );
-
-    canvas.restore();
-  }
-
-  @override
-  bool shouldRepaint(covariant _SmartPosLogoPainter oldDelegate) {
-    return oldDelegate.navyColor != navyColor || oldDelegate.orangeColor != orangeColor;
-  }
-}
-
-/// Full Branding Logo Widget (Logo Graphic + "SMART POS" Text)
-class SmartPosLogo extends StatelessWidget {
+/// Full TokaPOS Logo Widget (Icon + "TokaPOS" Wordmark)
+class TokaPosLogo extends StatelessWidget {
   final double iconSize;
   final double fontSize;
   final bool isDarkBackground;
   final bool showSubtitle;
 
-  const SmartPosLogo({
+  const TokaPosLogo({
     super.key,
-    this.iconSize = 40,
+    this.iconSize = 36,
     this.fontSize = 20,
     this.isDarkBackground = false,
     this.showSubtitle = false,
@@ -177,19 +72,22 @@ class SmartPosLogo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final navyText = isDarkBackground ? Colors.white : AppColors.primaryNavy;
-    final mutedText = isDarkBackground ? Colors.white70 : AppColors.textMuted;
+    final tokaColor = isDarkBackground ? Colors.white : const Color(0xFF0C2340);
+    final posColor = AppColors.accentOrange;
+    final subtitleColor = isDarkBackground ? Colors.white70 : AppColors.textMuted;
 
     return Row(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        SmartPosLogoIcon(
-          size: iconSize,
-          navyColor: isDarkBackground ? Colors.white : AppColors.primaryNavy,
-          orangeColor: AppColors.accentOrange,
-        ),
-        SizedBox(width: iconSize * 0.25),
+        if (iconSize > 0) ...[
+          TokaPosLogoIcon(
+            size: iconSize,
+            withBackground: isDarkBackground,
+            backgroundColor: isDarkBackground ? Colors.white : null,
+          ),
+          SizedBox(width: iconSize * 0.28),
+        ],
         Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -199,28 +97,34 @@ class SmartPosLogo extends StatelessWidget {
                 style: TextStyle(
                   fontSize: fontSize,
                   fontWeight: FontWeight.w900,
-                  letterSpacing: 1.0,
+                  letterSpacing: -0.3,
                 ),
                 children: [
                   TextSpan(
-                    text: 'SMART ',
-                    style: TextStyle(color: navyText),
+                    text: 'Toka',
+                    style: TextStyle(
+                      color: tokaColor,
+                      fontWeight: FontWeight.w900,
+                    ),
                   ),
                   TextSpan(
                     text: 'POS',
-                    style: TextStyle(color: AppColors.accentOrange),
+                    style: TextStyle(
+                      color: posColor,
+                      fontWeight: FontWeight.w900,
+                    ),
                   ),
                 ],
               ),
             ),
             if (showSubtitle)
               Text(
-                'Sistem Kasir Pintar',
+                'Point of Sale Modern',
                 style: TextStyle(
-                  fontSize: fontSize * 0.48,
-                  color: mutedText,
+                  fontSize: fontSize * 0.44,
+                  color: subtitleColor,
                   fontWeight: FontWeight.w500,
-                  letterSpacing: 0.5,
+                  letterSpacing: 0.3,
                 ),
               ),
           ],
@@ -229,3 +133,6 @@ class SmartPosLogo extends StatelessWidget {
     );
   }
 }
+
+/// Backward compatibility alias
+typedef SmartPosLogo = TokaPosLogo;

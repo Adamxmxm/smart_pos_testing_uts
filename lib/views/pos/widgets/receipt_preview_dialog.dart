@@ -148,15 +148,20 @@ class _ReceiptPreviewDialogState extends ConsumerState<ReceiptPreviewDialog> {
               Row(
                 children: [
                   Expanded(
-                    child: OutlinedButton.icon(
-                      onPressed: () => Navigator.pop(context),
-                      icon: const Icon(Icons.check_rounded, size: 18),
-                      label: const Text('Selesai'),
+                    child: Semantics(
+                      identifier: 'btn_nota_selesai',
+                      child: OutlinedButton.icon(
+                        onPressed: () => Navigator.pop(context),
+                        icon: const Icon(Icons.check_rounded, size: 18),
+                        label: const Text('Selesai'),
+                      ),
                     ),
                   ),
                   const SizedBox(width: 12),
                   Expanded(
-                    child: ElevatedButton.icon(
+                    child: Semantics(
+                      identifier: 'btn_cetak_nota',
+                      child: ElevatedButton.icon(
                       onPressed: _isPrinting ? null : _triggerPrint,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.accentOrange,
@@ -169,6 +174,7 @@ class _ReceiptPreviewDialogState extends ConsumerState<ReceiptPreviewDialog> {
                             )
                           : const Icon(Icons.print_rounded, size: 18),
                       label: const Text('Cetak Nota'),
+                    ),
                     ),
                   ),
                 ],

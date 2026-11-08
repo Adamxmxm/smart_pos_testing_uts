@@ -22,7 +22,7 @@ class SmartPOSApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Smart POS - Point of Sale',
+      title: 'TokaPOS - Point of Sale',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,
       home: const AppRootRouter(),

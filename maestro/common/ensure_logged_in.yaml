@@ -7,7 +7,7 @@ appId: com.smartpos.smart_pos
 # Jika sedang di layar login, lakukan proses login kasir
 - runFlow:
     when:
-      visible: "Masuk ke Smart POS"
+      visible: "Masuk ke TokaPOS|Masuk ke Smart POS"
     commands:
       - tapOn:
           below: "Alamat Email"
@@ -28,12 +28,7 @@ appId: com.smartpos.smart_pos
     when:
       notVisible: "Cari produk atau menu..."
     commands:
-      - tapOn:
-          text: ".*POS.*"
-          optional: true
-      - tapOn:
-          point: "12%,96%"
-          optional: true
+      - tapOn: ".*POS.*"
 
 # Tunggu sampai katalog POS siap
 - extendedWaitUntil:

@@ -19,7 +19,9 @@ class ProductCard extends StatelessWidget {
     final isOutOfStock = product.stock <= 0;
     final isLowStock = product.stock > 0 && product.stock <= 5;
 
-    return Card(
+    return Semantics(
+      identifier: 'product_card',
+      child: Card(
       elevation: 0,
       clipBehavior: Clip.antiAlias,
       shape: RoundedRectangleBorder(
@@ -157,6 +159,7 @@ class ProductCard extends StatelessWidget {
           ],
         ),
       ),
-    ).animate().fadeIn(duration: 200.ms);
+    ).animate().fadeIn(duration: 200.ms),
+    );
   }
 }

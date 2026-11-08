@@ -7,7 +7,7 @@ import '../core/utils/date_formatter.dart';
 import '../models/order_model.dart';
 
 class PrintService {
-  static const String shopName = 'SMART POS APP';
+  static const String shopName = 'TOKAPOS';
   static const String shopAddress = 'Jl. Sudirman No. 123, Jakarta';
   static const String shopPhone = 'Telp: 0812-3456-7890';
 

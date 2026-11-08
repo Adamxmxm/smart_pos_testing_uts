@@ -83,7 +83,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       const SizedBox(height: 18),
 
                       const Text(
-                        'Masuk ke Smart POS',
+                        'Masuk ke TokaPOS',
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           fontSize: 20,

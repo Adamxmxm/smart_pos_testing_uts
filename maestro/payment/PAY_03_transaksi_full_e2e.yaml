@@ -1,0 +1,178 @@
+appId: com.smartpos.smart_pos
+---
+# ==============================================================================
+# MASTER E2E TEST: TOKAPOS - TRANSAKSI PENJUALAN KASIR END-TO-END
+# ==============================================================================
+# Skenario Lengkap:
+#   1. Buka aplikasi POS & pastikan login
+#   2. Pilih 3 produk berbeda dari katalog dan masukkan ke keranjang
+#   3. Buka keranjang belanja & verifikasi total tagihan
+#   4. Klik 'Bayar Tunai'
+#   5. Pilih pembayaran nominal Rp 100.000 agar menghasilkan KEMBALIAN
+#   6. Verifikasi box kalkulasi kembalian tampil akurat
+#   7. Klik 'Selesaikan Pembayaran Tunai'
+#   8. Dialog 'Nota Transaksi' (Receipt Preview) muncul otomatis
+#   9. Uji toggle ukuran kertas struk (58mm & 80mm)
+#  10. Klik 'Cetak Nota' (ESC/POS thermal printer engine)
+#  11. Klik 'Selesai' untuk menutup nota dan kembali ke katalog bersih
+# ==============================================================================
+
+# Pastikan aplikasi aktif di layar
+- launchApp:
+    clearState: false
+
+# ----------------- 1. CEK LOGIN & PASTIKAN DI TAB POS -----------------
+- runFlow:
+    when:
+      visible: "Masuk ke TokaPOS|Masuk ke Smart POS"
+    commands:
+      - tapOn:
+          below: "Alamat Email"
+      - eraseText: 50
+      - inputText: "afifadam707@gmail.com"
+      - hideKeyboard
+      - tapOn:
+          below: "Kata Sandi"
+      - eraseText: 50
+      - inputText: "12345678"
+      - hideKeyboard
+      - tapOn: "Masuk Sekarang"
+
+- runFlow:
+    when:
+      notVisible: "Cari produk atau menu..."
+    commands:
+      - tapOn: ".*POS.*"
+
+- extendedWaitUntil:
+    visible: "Cari produk atau menu...|Semua"
+    timeout: 8000
+
+# ----------------- 2. PILIH PRODUK 1 KE KERANJANG -----------------
+# Tap kartu produk pertama (Kolom 1 Baris 1)
+- tapOn:
+    point: "25%,40%"
+
+- extendedWaitUntil:
+    visible: "Tambah.*"
+    timeout: 5000
+
+- tapOn: "Tambah.*"
+- wait: 1200
+
+# ----------------- 3. PILIH PRODUK 2 KE KERANJANG -----------------
+# Tap kartu produk kedua (Kolom 2 Baris 1)
+- tapOn:
+    point: "75%,40%"
+
+- extendedWaitUntil:
+    visible: "Tambah.*"
+    timeout: 5000
+
+- tapOn: "Tambah.*"
+- wait: 1200
+
+# ----------------- 4. PILIH PRODUK 3 KE KERANJANG -----------------
+# Tap kartu produk ketiga (Kolom 1 Baris 2)
+- tapOn:
+    point: "25%,70%"
+
+- extendedWaitUntil:
+    visible: "Tambah.*"
+    timeout: 5000
+
+- tapOn: "Tambah.*"
+- wait: 1200
+
+# ----------------- 5. BUKA KERANJANG BELANJA -----------------
+- runFlow:
+    when:
+      notVisible: "Bayar Tunai"
+    commands:
+      - tapOn:
+          text: ".*Item • Rp.*"
+          optional: true
+      - tapOn:
+          point: "85%,5%"
+          optional: true
+
+- extendedWaitUntil:
+    visible: "Bayar Tunai|Total Tagihan"
+    timeout: 7000
+
+- assertVisible: "Total Tagihan"
+- assertVisible: "Bayar Tunai"
+- takeScreenshot: "maestro/screenshots/e2e_01_keranjang_3_produk.png"
+
+# ----------------- 6. PROSES PEMBAYARAN TUNAI -----------------
+- tapOn: "Bayar Tunai"
+
+- extendedWaitUntil:
+    visible: "Proses Pembayaran|Selesaikan Pembayaran Tunai"
+    timeout: 7000
+
+- assertVisible: "Total Tagihan"
+
+# ----------------- 7. PEMBAYARAN DENGAN KEMBALIAN (RP 100.000) -----------------
+# Pilih preset Rp 100k untuk memicu perhitungan kembalian
+- tapOn:
+    text: "Rp 100k"
+    optional: true
+
+# Fallback: jika preset tidak ter-tap, ketik 100000 manual di field uang
+- runFlow:
+    when:
+      notVisible: "Kembalian:"
+    commands:
+      - tapOn: "Uang Diterima (Rp)"
+      - eraseText: 20
+      - inputText: "100000"
+      - hideKeyboard
+
+- extendedWaitUntil:
+    visible: "Kembalian:"
+    timeout: 5000
+
+# Verifikasi teks Kembalian muncul dengan nominal positif
+- assertVisible: "Kembalian:"
+- takeScreenshot: "maestro/screenshots/e2e_02_pembayaran_kembalian.png"
+
+# Selesaikan pembayaran tunai
+- tapOn: "Selesaikan Pembayaran Tunai"
+
+# ----------------- 8. DIALOG NOTA TRANSAKSI & CETAK STRUK -----------------
+- extendedWaitUntil:
+    visible: "Nota Transaksi"
+    timeout: 10000
+
+- assertVisible: "Ukuran Kertas:"
+- assertVisible: "58mm"
+- assertVisible: "80mm"
+- assertVisible: "Cetak Nota"
+- assertVisible: "Selesai"
+
+# Ganti ukuran kertas struk ke 80mm
+- tapOn: "80mm"
+- wait: 1000
+- takeScreenshot: "maestro/screenshots/e2e_03_struk_80mm.png"
+
+# Ganti kembali ke 58mm (standar printer thermal POS kasir)
+- tapOn: "58mm"
+- wait: 1000
+- takeScreenshot: "maestro/screenshots/e2e_04_struk_58mm.png"
+
+# Klik tombol Cetak Nota (ESC/POS thermal printer simulation)
+- tapOn: "Cetak Nota"
+- wait: 1500
+
+# Tutup dialog nota untuk menyelesaikan transaksi
+- tapOn: "Selesai"
+
+# ----------------- 9. SELESAI & KEMBALI KE POS -----------------
+- extendedWaitUntil:
+    visible: "Cari produk atau menu...|Semua"
+    timeout: 6000
+
+- assertVisible: "Semua"
+- takeScreenshot: "maestro/screenshots/e2e_05_transaksi_sukses_selesai.png"
+

@@ -17,7 +17,7 @@ appId: com.smartpos.smart_pos
     clearState: false
 
 - extendedWaitUntil:
-    visible: "Masuk ke Smart POS"
+    visible: "Masuk ke TokaPOS|Masuk ke Smart POS"
     timeout: 8000
 
 # 1. Klik tautan 'Daftar Baru' pada layar Login
@@ -51,6 +51,6 @@ appId: com.smartpos.smart_pos
 # 4. Verifikasi feedback sukses pendaftaran atau transisi kembali ke Login
 - extendedWaitUntil:
     visible:
-      text: "Masuk ke Smart POS"
+      text: "Masuk ke TokaPOS|Masuk ke Smart POS"
       optional: true
     timeout: 10000
