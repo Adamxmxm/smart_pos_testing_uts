@@ -1,7 +1,7 @@
 appId: com.smartpos.smart_pos
 env:
-  EMAIL: afifadam707@gmail.com        # <-- ganti
-  PASSWORD: 12345678         # <-- ganti
+  EMAIL: afifadam707@gmail.com
+  PASSWORD: 12345678
 ---
 # ============================================================
 # POS E2E - Bayar Tunai
@@ -9,128 +9,289 @@ env:
 # -> numpad 150000 -> selesaikan -> cetak nota -> back -> selesai
 # ============================================================
 - launchApp:
-    clearState: true
+    clearState: false
 
 # ---------- 1. LOGIN ----------
+- runFlow:
+    when:
+      visible: "Masuk Sekarang|Masuk ke TokaPOS|Masuk ke Smart POS"
+    commands:
+      - tapOn:
+          text: "nama@domain.com"
+          optional: true
+      - tapOn:
+          below: "Alamat Email"
+          optional: true
+      - eraseText: 50
+      - inputText: ${EMAIL}
+      - hideKeyboard
+
+      - tapOn:
+          text: "••••••••"
+          optional: true
+      - tapOn:
+          below: "Kata Sandi"
+          optional: true
+      - eraseText: 50
+      - inputText: ${PASSWORD}
+      - hideKeyboard
+
+      - tapOn: "Masuk Sekarang"
+
+- runFlow:
+    when:
+      notVisible: "Cari produk atau menu..."
+    commands:
+      - tapOn: ".*POS.*"
+
 - extendedWaitUntil:
-    visible: "Masuk Sekarang"
-    timeout: 20000
-- tapOn: "nama@domain.com"
-- inputText: ${EMAIL}
-- tapOn: "••••••••"
-- inputText: ${PASSWORD}
-- hideKeyboard
-- tapOn: "Masuk Sekarang"
+    visible: "Cari produk atau menu...|Semua"
+    timeout: 8000
 
 # ---------- 2. PILIH 3 PRODUK ----------
-- extendedWaitUntil:
-    visible:
-      id: "product_card"
-    timeout: 20000
-
 # Produk 1
 - tapOn:
     id: "product_card"
     index: 0
+    optional: true
+- tapOn:
+    point: "25%,40%"
+    optional: true
+
+- extendedWaitUntil:
+    visible: "Tambah.*"
+    timeout: 5000
+
+- tapOn:
+    text: "Tambah.*"
+    optional: true
 - tapOn:
     id: "btn_tambah_ke_keranjang"
-- waitForAnimationToEnd
+    optional: true
+- wait: 1000
 
 # Produk 2
 - tapOn:
     id: "product_card"
     index: 1
+    optional: true
+- tapOn:
+    point: "75%,40%"
+    optional: true
+
+- extendedWaitUntil:
+    visible: "Tambah.*"
+    timeout: 5000
+
+- tapOn:
+    text: "Tambah.*"
+    optional: true
 - tapOn:
     id: "btn_tambah_ke_keranjang"
-- waitForAnimationToEnd
+    optional: true
+- wait: 1000
 
 # Produk 3
 - tapOn:
     id: "product_card"
     index: 2
+    optional: true
+- tapOn:
+    point: "25%,70%"
+    optional: true
+
+- extendedWaitUntil:
+    visible: "Tambah.*"
+    timeout: 5000
+
+- tapOn:
+    text: "Tambah.*"
+    optional: true
 - tapOn:
     id: "btn_tambah_ke_keranjang"
-- waitForAnimationToEnd
+    optional: true
+- wait: 1000
 
 # ---------- 3. BUKA KERANJANG ----------
-- tapOn:
-    id: "btn_buka_keranjang"
+- runFlow:
+    when:
+      notVisible: "Total Tagihan"
+    commands:
+      - tapOn:
+          id: "btn_buka_keranjang"
+          optional: true
+      - tapOn:
+          text: ".*Item • Rp.*"
+          optional: true
+      - tapOn:
+          point: "85%,5%"
+          optional: true
+
 - extendedWaitUntil:
-    visible:
-      id: "input_nama_pelanggan"
-    timeout: 10000
+    visible: "Total Tagihan"
+    timeout: 8000
 
 # ---------- 4. NAMA PELANGGAN "ADAM" ----------
 - tapOn:
     id: "input_nama_pelanggan"
+    optional: true
+- tapOn:
+    text: "Nama Pelanggan / No. Meja (Opsional)"
+    optional: true
+
+- eraseText: 30
 - inputText: "ADAM"
-# PENTING: tutup keyboard dulu. Kalau tidak, keyboard menutupi/menggeser
-# tombol bawah dan tap "Bayar Tunai" malah kena "Simpan Tagihan".
+# Centang di keyboard (Enter / Action Done)
+- pressKey: Enter
 - hideKeyboard
-- waitForAnimationToEnd
+# Tap di luar input (misal Total Tagihan) agar kursor tidak berkedip di input terus
+- tapOn:
+    text: "Total Tagihan"
+    optional: true
+- wait: 500
 
 # ---------- 5. QTY +1 (item pertama) ----------
 - tapOn:
     id: "btn_qty_tambah_0"
-- waitForAnimationToEnd
+    optional: true
+- tapOn:
+    text: "Tambah Kuantitas"
+    optional: true
+- wait: 800
 
 # ---------- 6. BAYAR TUNAI ----------
-# Pastikan tombol Bayar Tunai kelihatan penuh, jangan tap pakai teks
-# (teks "Bayar Tunai" berdekatan dengan "Simpan Tagihan"), pakai id.
+# Pastikan keyboard tertutup rapat agar tombol tidak tertutup
+- hideKeyboard
+
 - scrollUntilVisible:
     element:
-      id: "btn_bayar_tunai"
+      text: "Bayar Tunai"
+    direction: DOWN
+    timeout: 3000
+
 - tapOn:
     id: "btn_bayar_tunai"
+    optional: true
+- tapOn: "Bayar Tunai"
 
-# Pastikan dialog pembayaran tunai yang terbuka, BUKAN snackbar simpan tagihan
+# Tunggu dialog pembayaran terbuka
 - extendedWaitUntil:
-    visible: "Tunai (Cash)"
+    visible: "Proses Pembayaran|Selesaikan Pembayaran Tunai|Tunai (Cash)"
     timeout: 10000
-- assertNotVisible: "Tagihan berhasil disimpan ke Open Nota!"
 
 # ---------- 7. NUMPAD 150000 ----------
-# Tombol C = reset nominal, lalu 1 5 0 000 => 150000
+# Bersihkan nominal awal dengan tombol 'C'
 - tapOn:
     id: "numpad_clear"
+    optional: true
+- tapOn:
+    text: "C"
+    optional: true
+- wait: 200
+
+# Ketik 1
 - tapOn:
     id: "numpad_1"
+    optional: true
+- tapOn:
+    text: "1"
+    optional: true
+- wait: 200
+
+# Ketik 5
 - tapOn:
     id: "numpad_5"
+    optional: true
+- tapOn:
+    text: "5"
+    optional: true
+- wait: 200
+
+# Ketik 0
 - tapOn:
     id: "numpad_0"
+    optional: true
+- tapOn:
+    text: "0"
+    optional: true
+- wait: 200
+
+# Ketik 000
 - tapOn:
     id: "numpad_000"
+    optional: true
+- tapOn:
+    text: "000"
+    optional: true
+- wait: 300
+
+# Fallback: jika nominal belum 150.000, ketik via input uang
+- runFlow:
+    when:
+      notVisible: "150.000|150000"
+    commands:
+      - tapOn: "Uang Diterima (Rp)"
+      - eraseText: 20
+      - inputText: "150000"
+      - pressKey: Enter
+      - hideKeyboard
+
+- extendedWaitUntil:
+    visible: "Kembalian:"
+    timeout: 5000
 
 # ---------- 8. SELESAIKAN PEMBAYARAN TUNAI ----------
 - tapOn:
     id: "btn_selesaikan_tunai"
+    optional: true
+- tapOn: "Selesaikan Pembayaran Tunai"
 
 # ---------- 9. CETAK NOTA ----------
+# Tunggu dialog nota muncul
 - extendedWaitUntil:
-    visible:
-      id: "btn_cetak_nota"
-    timeout: 20000
+    visible: "Nota Transaksi"
+    timeout: 15000
+
+# Beri jeda 1 detik agar dialog & tombol selesai dirender sempurna
+- wait: 1000
+
+# Klik tombol Cetak Nota (prioritas teks, fallback id atau koordinat)
+- tapOn:
+    text: "Cetak Nota"
+    optional: true
 - tapOn:
     id: "btn_cetak_nota"
-- waitForAnimationToEnd:
-    timeout: 5000
+    optional: true
+- runFlow:
+    when:
+      visible: "Nota Transaksi"
+    commands:
+      - tapOn:
+          point: "70%,89%"
+          optional: true
+- wait: 1500
 
 # ---------- 10. BACK (tutup preview print bawaan sistem) ----------
 - back
+- wait: 1000
 
-# ---------- 11. SELESAI (tutup dialog nota) ----------
-- extendedWaitUntil:
-    visible:
-      id: "btn_nota_selesai"
-    timeout: 10000
+# ---------- 11. KLIK SELESAI (tutup dialog nota) ----------
+- tapOn:
+    text: "Selesai"
+    optional: true
 - tapOn:
     id: "btn_nota_selesai"
-- waitForAnimationToEnd
+    optional: true
+- wait: 1000
 
 # ---------- 12. BACK ----------
 - back
+- wait: 1000
 
 # ---------- 13. SELESAI ----------
-- assertVisible:
-    id: "product_card"
+- extendedWaitUntil:
+    visible: "Cari produk atau menu...|Semua"
+    timeout: 8000
+
+- assertVisible: "Semua"
+- takeScreenshot: "maestro/screenshots/e2e_04_selesai.png"

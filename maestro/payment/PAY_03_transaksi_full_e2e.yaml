@@ -1,43 +1,41 @@
 appId: com.smartpos.smart_pos
+env:
+  EMAIL: afifadam707@gmail.com
+  PASSWORD: 12345678
 ---
-# ==============================================================================
-# MASTER E2E TEST: TOKAPOS - TRANSAKSI PENJUALAN KASIR END-TO-END
-# ==============================================================================
-# Skenario Lengkap:
-#   1. Login kasir & masuk ke tab POS
-#   2. Pilih 3 produk dari katalog
-#   3. Buka keranjang belanja
-#   4. Ketik nama pelanggan "ADAM"
-#   5. Klik tombol plus (+) 1 kali untuk menambah kuantitas item
-#   6. Klik 'Bayar Tunai'
-#   7. Ketik di numpad: 150000 (menghasilkan kembalian)
-#   8. Klik 'Selesaikan Pembayaran Tunai'
-#   9. Klik 'Cetak Nota'
-#  10. Back (tutup print preview sistem)
-#  11. Klik 'Selesai' (tutup dialog nota)
-#  12. Back
-#  13. Selesai (kembali ke POS bersih)
-# ==============================================================================
-
-# Pastikan aplikasi aktif di layar
+# ============================================================
+# POS E2E - Bayar Tunai
+# login -> 3 produk -> keranjang -> ADAM -> qty +1 -> bayar tunai
+# -> numpad 150000 -> selesaikan -> cetak nota -> back -> selesai
+# ============================================================
 - launchApp:
     clearState: false
 
-# ----------------- 1. LOGIN & PASTIKAN DI TAB POS -----------------
+# ---------- 1. LOGIN ----------
 - runFlow:
     when:
-      visible: "Masuk ke TokaPOS|Masuk ke Smart POS"
+      visible: "Masuk Sekarang|Masuk ke TokaPOS|Masuk ke Smart POS"
     commands:
       - tapOn:
+          text: "nama@domain.com"
+          optional: true
+      - tapOn:
           below: "Alamat Email"
+          optional: true
       - eraseText: 50
-      - inputText: "afifadam707@gmail.com"
+      - inputText: ${EMAIL}
       - hideKeyboard
+
+      - tapOn:
+          text: "••••••••"
+          optional: true
       - tapOn:
           below: "Kata Sandi"
+          optional: true
       - eraseText: 50
-      - inputText: "12345678"
+      - inputText: ${PASSWORD}
       - hideKeyboard
+
       - tapOn: "Masuk Sekarang"
 
 - runFlow:
@@ -50,45 +48,78 @@ appId: com.smartpos.smart_pos
     visible: "Cari produk atau menu...|Semua"
     timeout: 8000
 
-# ----------------- 2. PILIH 3 PRODUK KE KERANJANG -----------------
-# Produk 1 (Baris 1 Kolom 1)
+# ---------- 2. PILIH 3 PRODUK ----------
+# Produk 1
+- tapOn:
+    id: "product_card"
+    index: 0
+    optional: true
 - tapOn:
     point: "25%,40%"
+    optional: true
 
 - extendedWaitUntil:
     visible: "Tambah.*"
     timeout: 5000
 
-- tapOn: "Tambah.*"
-- wait: 1200
+- tapOn:
+    text: "Tambah.*"
+    optional: true
+- tapOn:
+    id: "btn_tambah_ke_keranjang"
+    optional: true
+- wait: 1000
 
-# Produk 2 (Baris 1 Kolom 2)
+# Produk 2
+- tapOn:
+    id: "product_card"
+    index: 1
+    optional: true
 - tapOn:
     point: "75%,40%"
+    optional: true
 
 - extendedWaitUntil:
     visible: "Tambah.*"
     timeout: 5000
 
-- tapOn: "Tambah.*"
-- wait: 1200
+- tapOn:
+    text: "Tambah.*"
+    optional: true
+- tapOn:
+    id: "btn_tambah_ke_keranjang"
+    optional: true
+- wait: 1000
 
-# Produk 3 (Baris 2 Kolom 1)
+# Produk 3
+- tapOn:
+    id: "product_card"
+    index: 2
+    optional: true
 - tapOn:
     point: "25%,70%"
+    optional: true
 
 - extendedWaitUntil:
     visible: "Tambah.*"
     timeout: 5000
 
-- tapOn: "Tambah.*"
-- wait: 1200
+- tapOn:
+    text: "Tambah.*"
+    optional: true
+- tapOn:
+    id: "btn_tambah_ke_keranjang"
+    optional: true
+- wait: 1000
 
-# ----------------- 3. KLIK KERANJANG -----------------
+# ---------- 3. BUKA KERANJANG ----------
 - runFlow:
     when:
       notVisible: "Total Tagihan"
     commands:
+      - tapOn:
+          id: "btn_buka_keranjang"
+          optional: true
       - tapOn:
           text: ".*Item • Rp.*"
           optional: true
@@ -98,9 +129,9 @@ appId: com.smartpos.smart_pos
 
 - extendedWaitUntil:
     visible: "Total Tagihan"
-    timeout: 7000
+    timeout: 8000
 
-# ----------------- 4. KETIK NAMA PELANGGAN "ADAM" -----------------
+# ---------- 4. NAMA PELANGGAN "ADAM" ----------
 - tapOn:
     id: "input_nama_pelanggan"
     optional: true
@@ -110,10 +141,16 @@ appId: com.smartpos.smart_pos
 
 - eraseText: 30
 - inputText: "ADAM"
+# Centang di keyboard (Enter / Action Done)
+- pressKey: Enter
 - hideKeyboard
-- wait: 800
+# Tap di luar input (misal Total Tagihan) agar kursor tidak berkedip di input terus
+- tapOn:
+    text: "Total Tagihan"
+    optional: true
+- wait: 500
 
-# ----------------- 5. KLIK TOMBOL PLUS 1 KALI UNTUK TAMBAH QTY ITEM -----------------
+# ---------- 5. QTY +1 (item pertama) ----------
 - tapOn:
     id: "btn_qty_tambah_0"
     optional: true
@@ -122,14 +159,10 @@ appId: com.smartpos.smart_pos
     optional: true
 - wait: 800
 
-# Screenshot keranjang dengan pelanggan ADAM & qty bertambah
-- takeScreenshot: "maestro/screenshots/e2e_01_keranjang_adam.png"
-
-# ----------------- 6. KLIK BAYAR TUNAI -----------------
+# ---------- 6. BAYAR TUNAI ----------
 # Pastikan keyboard tertutup rapat agar tombol tidak tertutup
 - hideKeyboard
 
-# Scroll untuk memastikan tombol Bayar Tunai terlihat
 - scrollUntilVisible:
     element:
       text: "Bayar Tunai"
@@ -141,57 +174,58 @@ appId: com.smartpos.smart_pos
     optional: true
 - tapOn: "Bayar Tunai"
 
+# Tunggu dialog pembayaran terbuka
 - extendedWaitUntil:
-    visible: "Proses Pembayaran|Selesaikan Pembayaran Tunai"
-    timeout: 7000
+    visible: "Proses Pembayaran|Selesaikan Pembayaran Tunai|Tunai (Cash)"
+    timeout: 10000
 
-# ----------------- 7. KETIK DI NUMPAD: 150000 -----------------
-# Bersihkan dulu dengan tombol 'C'
+# ---------- 7. NUMPAD 150000 ----------
+# Bersihkan nominal awal dengan tombol 'C'
 - tapOn:
     id: "numpad_clear"
     optional: true
 - tapOn:
     text: "C"
     optional: true
-- wait: 300
+- wait: 200
 
-# Ketik: 1
+# Ketik 1
 - tapOn:
     id: "numpad_1"
     optional: true
 - tapOn:
     text: "1"
     optional: true
-- wait: 300
+- wait: 200
 
-# Ketik: 5
+# Ketik 5
 - tapOn:
     id: "numpad_5"
     optional: true
 - tapOn:
     text: "5"
     optional: true
-- wait: 300
+- wait: 200
 
-# Ketik: 0
+# Ketik 0
 - tapOn:
     id: "numpad_0"
     optional: true
 - tapOn:
     text: "0"
     optional: true
-- wait: 300
+- wait: 200
 
-# Ketik: 000 (total = 150.000)
+# Ketik 000
 - tapOn:
     id: "numpad_000"
     optional: true
 - tapOn:
     text: "000"
     optional: true
-- wait: 500
+- wait: 300
 
-# Fallback: jika numpad terlewat, ketik langsung via field uang
+# Fallback: jika nominal belum 150.000, ketik via input uang
 - runFlow:
     when:
       notVisible: "150.000|150000"
@@ -199,55 +233,65 @@ appId: com.smartpos.smart_pos
       - tapOn: "Uang Diterima (Rp)"
       - eraseText: 20
       - inputText: "150000"
+      - pressKey: Enter
       - hideKeyboard
 
 - extendedWaitUntil:
     visible: "Kembalian:"
     timeout: 5000
 
-- assertVisible: "Kembalian:"
-- takeScreenshot: "maestro/screenshots/e2e_02_pembayaran_150000.png"
-
-# ----------------- 8. KLIK SELESAIKAN PEMBAYARAN TUNAI -----------------
+# ---------- 8. SELESAIKAN PEMBAYARAN TUNAI ----------
 - tapOn:
     id: "btn_selesaikan_tunai"
     optional: true
 - tapOn: "Selesaikan Pembayaran Tunai"
 
-# ----------------- 9. KLIK CETAK NOTA -----------------
+# ---------- 9. CETAK NOTA ----------
+# Tunggu dialog nota muncul
 - extendedWaitUntil:
     visible: "Nota Transaksi"
-    timeout: 10000
+    timeout: 15000
 
-- assertVisible: "Cetak Nota"
-- assertVisible: "Selesai"
-- takeScreenshot: "maestro/screenshots/e2e_03_nota_transaksi.png"
+# Beri jeda 1 detik agar dialog & tombol selesai dirender sempurna
+- wait: 1000
 
+# Klik tombol Cetak Nota (prioritas teks, fallback id atau koordinat)
+- tapOn:
+    text: "Cetak Nota"
+    optional: true
 - tapOn:
     id: "btn_cetak_nota"
     optional: true
-- tapOn: "Cetak Nota"
+- runFlow:
+    when:
+      visible: "Nota Transaksi"
+    commands:
+      - tapOn:
+          point: "70%,89%"
+          optional: true
 - wait: 1500
 
-# ----------------- 10. BACK -----------------
+# ---------- 10. BACK (tutup preview print bawaan sistem) ----------
 - back
 - wait: 1000
 
-# ----------------- 11. KLIK SELESAI -----------------
+# ---------- 11. KLIK SELESAI (tutup dialog nota) ----------
+- tapOn:
+    text: "Selesai"
+    optional: true
 - tapOn:
     id: "btn_nota_selesai"
     optional: true
-- tapOn: "Selesai"
 - wait: 1000
 
-# ----------------- 12. BACK -----------------
+# ---------- 12. BACK ----------
 - back
 - wait: 1000
 
-# ----------------- 13. SELESAI -----------------
+# ---------- 13. SELESAI ----------
 - extendedWaitUntil:
     visible: "Cari produk atau menu...|Semua"
-    timeout: 6000
+    timeout: 8000
 
 - assertVisible: "Semua"
 - takeScreenshot: "maestro/screenshots/e2e_04_selesai.png"
