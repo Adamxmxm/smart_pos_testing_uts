@@ -1,0 +1,283 @@
+appId: com.smartpos.smart_pos
+env:
+  EMAIL: afifadam707@gmail.com
+  PASSWORD: 12345678
+  NAMA_PRODUK: "Milo Dinosaur"
+  HARGA_AWAL: "15000"
+  HARGA_BARU: "20000"
+  STOK_AWAL: "50"
+  STOK_BARU: "75"
+---
+# ============================================================
+# CRUD PRODUK (LENGKAP E2E)
+# 1. Login (jika belum)
+# 2. Buka menu Produk (Tab 2)
+# 3. CREATE: Tambah "Milo Dinosaur", kategori, harga, stok, foto (kiri atas)
+# 4. READ: Cari produk di search bar, verifikasi data tampil
+# 5. UPDATE: Klik tombol edit (pensil), ubah stok ke 75, ubah harga ke 20000,
+#            ganti foto ke GRID TENGAH galeri, lalu Simpan Perubahan
+# 6. DELETE: Klik tombol hapus (tong sampah), konfirmasi Hapus
+# ============================================================
+- launchApp:
+    clearState: false
+
+# Splash screen check
+- extendedWaitUntil:
+    visible: ".*(Masuk Sekarang|Keranjang|Semua|Produk).*"
+    timeout: 15000
+
+# ---------- LOGIN (JIKA BELUM LOGIN) ----------
+- runFlow:
+    when:
+      visible: "Masuk Sekarang|Masuk ke TokaPOS|Masuk ke Smart POS"
+    commands:
+      - tapOn:
+          text: "nama@domain.com"
+          optional: true
+      - tapOn:
+          below: "Alamat Email"
+          optional: true
+      - eraseText: 50
+      - inputText: ${EMAIL}
+      - hideKeyboard
+
+      - tapOn:
+          text: "••••••••"
+          optional: true
+      - tapOn:
+          below: "Kata Sandi"
+          optional: true
+      - eraseText: 50
+      - inputText: ${PASSWORD}
+      - hideKeyboard
+
+      - tapOn: "Masuk Sekarang"
+
+# ---------- BUKA MENU PRODUK (TAB 2) ----------
+- extendedWaitUntil:
+    visible: ".*Produk.*"
+    timeout: 15000
+
+- tapOn: ".*Produk.*"
+
+- extendedWaitUntil:
+    visible: "Produk & Stok|Tambah"
+    timeout: 10000
+
+# ============================================================
+# C - CREATE (TAMBAH PRODUK BARU)
+# ============================================================
+- tapOn: "Tambah"
+
+- extendedWaitUntil:
+    visible: "Tambah Produk Baru|Nama Produk"
+    timeout: 10000
+
+# 1. Input Nama Produk
+- tapOn: "Contoh: Kopi Susu Gula Aren"
+- inputText: ${NAMA_PRODUK}
+- pressKey: Enter
+
+# 2. Pilih Kategori: Kopi & Minuman
+- tapOn: "Pilih Kategori"
+- tapOn: "Kopi.*Minuman"
+
+# 3. Input Harga Jual Awal (Rp 15.000)
+- tapOn:
+    below: "Harga Jual \\(Rp\\)"
+    optional: true
+- eraseText: 10
+- inputText: ${HARGA_AWAL}
+- pressKey: Enter
+
+# 4. Input Jumlah Stok Awal (50)
+- tapOn:
+    below: "Jumlah Stok"
+    optional: true
+- eraseText: 10
+- inputText: ${STOK_AWAL}
+- pressKey: Enter
+- hideKeyboard
+
+# 5. Upload Foto Pertama dari Galeri (Pilih grid kiri atas)
+- scrollUntilVisible:
+    element:
+      text: ".*Foto.*Galeri.*"
+    direction: DOWN
+    timeout: 5000
+
+- tapOn: ".*Foto.*Galeri.*"
+- wait: 2000
+
+# Pilih foto di grid kiri atas photo picker (Kolom 1: X=17%, Y=55%)
+- tapOn:
+    point: "17%,55%"
+    optional: true
+
+# Tombol Done/Selesai di photo picker jika muncul
+- tapOn:
+    text: "Done|Selesai"
+    optional: true
+- wait: 1000
+
+# 6. Simpan Produk Baru
+- scrollUntilVisible:
+    element:
+      text: "Tambah Produk"
+    direction: DOWN
+    timeout: 5000
+
+- tapOn: "Tambah Produk"
+- wait: 1500
+
+# ============================================================
+# R - READ (CARI & VERIFIKASI PRODUK DITAMBAHKAN)
+# ============================================================
+- tapOn: "Cari produk berdasarkan nama..."
+- eraseText: 30
+- inputText: ${NAMA_PRODUK}
+- pressKey: Enter
+
+# Tutup keyboard dan unfocus dari search bar agar kartu produk terlihat jelas!
+- hideKeyboard
+- tapOn: "Produk & Stok"
+- wait: 1000
+
+- extendedWaitUntil:
+    visible: ${NAMA_PRODUK}
+    timeout: 10000
+
+- assertVisible: "Stok: ${STOK_AWAL}"
+
+# ============================================================
+# U - UPDATE (KLIK EDIT PENSIL -> GANTI HARGA, STOK & FOTO TENGAH)
+# ============================================================
+# Pastikan keyboard tertutup rapat agar icon edit terlihat
+- hideKeyboard
+- wait: 500
+
+# Klik icon edit (pensil):
+# 1. Coba tap via tooltip "Edit Produk"
+- tapOn:
+    text: "Edit Produk"
+    optional: true
+
+# 2. Fallback: jika dialog belum terbuka (cek "Simpan Perubahan"), tap koordinat tombol pensil
+- runFlow:
+    when:
+      notVisible: "Simpan Perubahan"
+    commands:
+      - tapOn:
+          point: "85%,23%"
+          optional: true
+
+# 3. Fallback kedua jika resolusi sedikit berbeda
+- runFlow:
+    when:
+      notVisible: "Simpan Perubahan"
+    commands:
+      - tapOn:
+          point: "84%,25%"
+          optional: true
+
+# Pastikan dialog Edit Produk sudah terbuka penuh
+- extendedWaitUntil:
+    visible: "Simpan Perubahan"
+    timeout: 10000
+
+# 1. Edit Harga Jual ke Harga Baru (Rp 20.000)
+- tapOn:
+    below: "Harga Jual \\(Rp\\)"
+    optional: true
+- eraseText: 10
+- inputText: ${HARGA_BARU}
+- pressKey: Enter
+
+# 2. Edit Jumlah Stok ke Stok Baru (75)
+- tapOn:
+    below: "Jumlah Stok"
+    optional: true
+- eraseText: 10
+- inputText: ${STOK_BARU}
+- pressKey: Enter
+- hideKeyboard
+
+# 3. Ganti Foto dari Galeri -> PILIH GRID YANG TENGAH!
+- scrollUntilVisible:
+    element:
+      text: ".*Foto.*Galeri.*"
+    direction: DOWN
+    timeout: 5000
+
+- tapOn: ".*Foto.*Galeri.*"
+- wait: 2000
+
+# PILIH FOTO DI GRID TENGAH (Kolom ke-2 photo picker: X=50%, Y=55%)
+- tapOn:
+    point: "50%,55%"
+    optional: true
+
+# Tombol Done/Selesai jika ada
+- tapOn:
+    text: "Done|Selesai"
+    optional: true
+- wait: 1000
+
+# 4. Simpan Perubahan
+- scrollUntilVisible:
+    element:
+      text: "Simpan Perubahan"
+    direction: DOWN
+    timeout: 5000
+
+- tapOn: "Simpan Perubahan"
+- wait: 1500
+
+# Verifikasi stok ter-update ke 75
+- extendedWaitUntil:
+    visible: "Stok: ${STOK_BARU}"
+    timeout: 10000
+- assertVisible: "Stok: ${STOK_BARU}"
+
+# ============================================================
+# D - DELETE (HAPUS PRODUK)
+# ============================================================
+- hideKeyboard
+- tapOn: "Produk & Stok"
+- wait: 500
+
+# Klik icon hapus (tong sampah):
+# 1. Coba via tooltip "Hapus Produk"
+- tapOn:
+    text: "Hapus Produk"
+    optional: true
+
+# 2. Fallback: jika dialog belum terbuka, tap koordinat icon tong sampah
+- runFlow:
+    when:
+      notVisible: "Hapus Produk\\?"
+    commands:
+      - tapOn:
+          point: "94%,23%"
+          optional: true
+
+# 3. Fallback kedua jika resolusi berbeda
+- runFlow:
+    when:
+      notVisible: "Hapus Produk\\?"
+    commands:
+      - tapOn:
+          point: "94%,25%"
+          optional: true
+
+- extendedWaitUntil:
+    visible: "Hapus Produk\\?"
+    timeout: 10000
+
+# Konfirmasi Hapus
+- tapOn: "Hapus"
+- wait: 1500
+
+# Verifikasi produk sudah tidak terlihat di daftar
+- assertNotVisible: ${NAMA_PRODUK}
+- takeScreenshot: "maestro/screenshots/crud_product_selesai.png"

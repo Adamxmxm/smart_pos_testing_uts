@@ -11,7 +11,12 @@ env:
 - launchApp:
     clearState: false
 
-# ---------- 1. LOGIN ----------
+# Splash screen check
+- extendedWaitUntil:
+    visible: ".*(Masuk Sekarang|Keranjang|Semua).*"
+    timeout: 15000
+
+# ---------- 1. LOGIN (JIKA BELUM LOGIN) ----------
 - runFlow:
     when:
       visible: "Masuk Sekarang|Masuk ke TokaPOS|Masuk ke Smart POS"

@@ -3,55 +3,60 @@ appId: com.smartpos.smart_pos
 # ==============================================================================
 # UAT Test Case: NAV-01
 # Modul: Navigation Bar
-# Deskripsi: Navigasi antar modul utama aplikasi
+# Deskripsi: Navigasi antar modul utama aplikasi TokaPOS
 # ==============================================================================
 
 # Pastikan aplikasi aktif di layar
 - launchApp:
     clearState: false
 
+# Tunggu splash screen selesai dan masuk ke POS atau Login
+- extendedWaitUntil:
+    visible: ".*(Masuk Sekarang|Keranjang|Semua|Produk).*"
+    timeout: 15000
+
 # 1. Navigasi ke menu Produk (Tab 2)
-# Di Flutter Android, labelnya adalah 'Produk\nTab 2 of 4'
+# Di Flutter Android, labelnya bisa "Produk" atau "Produk\nTab 2 of 4"
 - tapOn: ".*Produk.*"
 
 # Verifikasi halaman Produk & Stok terbuka
 - extendedWaitUntil:
-    visible: "Produk & Stok|Manajemen Produk|Tambah"
-    timeout: 6000
+    visible: "Produk & Stok|Tambah"
+    timeout: 8000
 
 - assertVisible: "Tambah|Tambah Produk"
 
 # 2. Navigasi ke menu Laporan (Tab 3)
-# Di Flutter Android, labelnya adalah 'Laporan\nTab 3 of 4'
+# Di Flutter Android, labelnya bisa "Laporan" atau "Laporan\nTab 3 of 4"
 - tapOn: ".*Laporan.*"
 
 # Verifikasi halaman Laporan terbuka
 - extendedWaitUntil:
     visible: "Total Omset Penjualan|Total Transaksi"
-    timeout: 6000
+    timeout: 8000
 
 - assertVisible: "Total Omset Penjualan"
 - assertVisible: "Total Transaksi"
 
 # 3. Navigasi ke menu Akun (Tab 4)
-# Di Flutter Android, labelnya adalah 'Akun\nTab 4 of 4'
+# Di Flutter Android, labelnya bisa "Akun" atau "Akun\nTab 4 of 4"
 - tapOn: ".*Akun.*"
 
 # Verifikasi halaman Akun terbuka
 - extendedWaitUntil:
     visible: "Akun & Profil Kasir|Ringkasan Sesi Operasional"
-    timeout: 6000
+    timeout: 8000
 
 - assertVisible: "Ringkasan Sesi Operasional"
 
 # 4. Navigasi kembali ke menu POS (Tab 1)
-# Di Flutter Android, labelnya adalah 'POS\nTab 1 of 4'
+# Di Flutter Android, labelnya bisa "POS" atau "POS\nTab 1 of 4"
 - tapOn: ".*POS.*"
 
 # Verifikasi kembali ke halaman POS
 - extendedWaitUntil:
     visible: "Cari produk atau menu...|Semua"
-    timeout: 6000
+    timeout: 8000
 
 - assertVisible: "Semua"
 
