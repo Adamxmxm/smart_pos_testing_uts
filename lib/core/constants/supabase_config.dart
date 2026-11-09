@@ -1,9 +1,8 @@
 /// Configuration constants for Supabase integration.
 /// Replace placeholder values with your actual project credentials from Supabase Dashboard.
 class SupabaseConfig {
-  static const String supabaseUrl = 'https://ojcvwsufnljeiyofpqns.supabase.co';
-  static const String supabaseAnonKey =
-      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9qY3Z3c3VmbmxqZWl5b2ZwcW5zIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk5ODM2MjAsImV4cCI6MjEwNTU1OTYyMH0.hgkBB0EL-HfIVAb1Vj-Zcmx7qGIx3_VUU3gqDrH6zRw';
+  static const String supabaseUrl = 'https://YOUR_SUPABASE_PROJECT_URL.supabase.co';
+  static const String supabaseAnonKey = 'YOUR_SUPABASE_ANON_KEY';
 
   // Table Names conforming to PRD schema
   static const String tableProfiles = 'profiles';
