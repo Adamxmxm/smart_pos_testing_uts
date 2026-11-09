@@ -22,7 +22,7 @@
 | **Nama Aplikasi** | **TokaPOS (Sistem Kasir Pintar & Modern)** |
 | **Peran** | Mobile App Developer & QA / Automated Tester |
 | **Tautan Repository Git** | https://github.com/Adamxmxm/smart_pos_testing_uts |
-| **Tautan Video Penjelasan** | `[Isi tautan video demonstrasi (durasi 5–10 menit) di sini]` |
+| **Tautan Video Penjelasan** | https://drive.google.com/drive/folders/1PM3Wx3KgyBK6DBSki5I4-JvC_0XjZSLL?usp=sharing |
 
 ---
 
