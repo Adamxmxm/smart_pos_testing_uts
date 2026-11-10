@@ -1,0 +1,127 @@
+appId: com.smartpos.smart_pos
+name: Auth Lengkap (Register + Login + Logout)
+tags:
+  - auth
+env:
+  PASSWORD_UJI: "Uji12345!"
+  NAMA_UJI: "Kasir Uji"
+---
+- evalScript: ${output.email = 'kasir' + Date.now() + '@test.com'}
+
+- launchApp:
+    clearState: true
+- extendedWaitUntil:
+    visible: "Masuk Sekarang"
+    timeout: 15000
+- takeScreenshot: "maestro/screenshots/auth_00_halaman_login"
+
+- tapOn: "Masuk Sekarang"
+- assertVisible: ".*wajib diisi.*"
+- takeScreenshot: "maestro/screenshots/auth_01_login_kosong"
+
+- tapOn:
+    below: "Alamat Email"
+- inputText: ${output.email}
+- hideKeyboard
+- tapOn:
+    below: "Kata Sandi"
+- inputText: ${PASSWORD_UJI}
+- hideKeyboard
+- tapOn: "Masuk Sekarang"
+- extendedWaitUntil:
+    visible: ".*salah.*"
+    timeout: 10000
+- takeScreenshot: "maestro/screenshots/auth_02_login_akun_tidak_ada"
+
+- tapOn: "Daftar Baru"
+- waitForAnimationToEnd:
+    timeout: 1500
+- takeScreenshot: "maestro/screenshots/auth_03_halaman_register"
+
+- tapOn: "Daftar Sekarang"
+- assertVisible: ".*wajib diisi.*"
+- takeScreenshot: "maestro/screenshots/auth_04_register_kosong"
+
+- tapOn:
+    below: "Nama Lengkap Kasir"
+- inputText: ${NAMA_UJI}
+- hideKeyboard
+- tapOn:
+    below: "Alamat Email"
+- inputText: "emailtanpaformat"
+- hideKeyboard
+- tapOn:
+    below: "Kata Sandi"
+- inputText: ${PASSWORD_UJI}
+- hideKeyboard
+- tapOn: "Daftar Sekarang"
+- assertVisible: ".*Format email tidak valid.*"
+- takeScreenshot: "maestro/screenshots/auth_05_register_email_salah"
+
+- launchApp:
+    clearState: true
+- extendedWaitUntil:
+    visible: "Masuk Sekarang"
+    timeout: 15000
+- tapOn: "Daftar Baru"
+- waitForAnimationToEnd:
+    timeout: 1500
+- tapOn:
+    below: "Nama Lengkap Kasir"
+- inputText: ${NAMA_UJI}
+- hideKeyboard
+- tapOn:
+    below: "Alamat Email"
+- inputText: ${output.email}
+- hideKeyboard
+- tapOn:
+    below: "Kata Sandi"
+- inputText: ${PASSWORD_UJI}
+- hideKeyboard
+- tapOn: "Daftar Sekarang"
+- extendedWaitUntil:
+    visible: ".*berhasil.*"
+    timeout: 15000
+- takeScreenshot: "maestro/screenshots/auth_06_register_berhasil"
+
+- extendedWaitUntil:
+    visible: "(?s).*(Masuk Sekarang|Laporan).*"
+    timeout: 15000
+- runFlow:
+    when:
+      visible: "(?s)Laporan.*"
+    commands:
+      - tapOn: "(?s)Akun.*"
+      - scrollUntilVisible:
+          element: "Keluar dari Akun (Logout)"
+      - tapOn: "Keluar dari Akun (Logout)"
+      - tapOn: "Ya, Keluar"
+- extendedWaitUntil:
+    visible: "Masuk Sekarang"
+    timeout: 15000
+
+- tapOn:
+    below: "Alamat Email"
+- inputText: ${output.email}
+- hideKeyboard
+- tapOn:
+    below: "Kata Sandi"
+- inputText: ${PASSWORD_UJI}
+- hideKeyboard
+- tapOn: "Masuk Sekarang"
+- extendedWaitUntil:
+    visible: ".*(Keranjang|Semua|Produk).*"
+    timeout: 15000
+- assertNotVisible: "Masuk Sekarang"
+- takeScreenshot: "maestro/screenshots/auth_07_login_berhasil"
+
+- tapOn: "(?s)Akun.*"
+- scrollUntilVisible:
+    element: "Keluar dari Akun (Logout)"
+- tapOn: "Keluar dari Akun (Logout)"
+- tapOn: "Ya, Keluar"
+- extendedWaitUntil:
+    visible: "Masuk Sekarang"
+    timeout: 10000
+- takeScreenshot: "maestro/screenshots/auth_08_logout"
+

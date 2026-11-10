@@ -12,7 +12,7 @@
 ## 👤 Informasi Mahasiswa & Proyek
 
 | Informasi | Keterangan |
-| :--- | :--- |
+| :--- | :--- |nah 
 | **Mata Kuliah** | Mobile Testing |
 | **Dosen Pengampu** | Triyono M.Kom |
 | **Program Studi** | S1 Teknik Informatika |
@@ -82,53 +82,33 @@ Pengujian UAT mencakup **20+ skenario pengujian** yang menguji alur utama (*happ
 
 ## 🤖 3. Automate Testing Menggunakan Maestro
 
-Sesuai ketentuan teknis UTS, otomatisasi pengujian disusun menggunakan **Maestro E2E Testing Framework** dan memuat skenario yang mencakup 4 pilar utama:
+Sesuai ketentuan teknis UTS Mobile Testing, pengujian otomatis *End-to-End* (E2E) disusun menggunakan **Maestro Testing Framework** dengan fokus utama pada 4 skenario komprehensif berikut yang berada langsung di folder `maestro/`:
 
-| No | Pilar Ketentuan UTS | Skenario / Flow Maestro | File YAML | Keterangan Verifikasi (Assertion) |
-|:--:|:--------------------|:------------------------|:----------|:----------------------------------|
-| 1 | **Pembukaan Aplikasi** | AUTH-01 Splash Screen | [`maestro/auth/AUTH_01_splash_screen.yaml`](file:///c:/xampp/htdocs/FLUTTER/UDB/udb_3/maestro/auth/AUTH_01_splash_screen.yaml) | Memverifikasi logo splash TokaPOS, animasi auto-check sesi, dan transisi ke dashboard / login. Dilengkapi `takeScreenshot`. |
-| 2 | **Navigasi Aplikasi** | NAV-01 Navigation Bar | [`maestro/navigation/NAV_01_navigation_bar.yaml`](file:///c:/xampp/htdocs/FLUTTER/UDB/udb_3/maestro/navigation/NAV_01_navigation_bar.yaml) | Menguji perpindahan antar modul utama (POS, Produk, Laporan, Akun) secara berurutan. Dilengkapi `takeScreenshot`. |
-| 3 | **Alur Transaksi / CRUD** | PAY-01, PRD-01 & POS_FULL_E2E | [`maestro/payment/PAY_01_pembayaran_tunai.yaml`](file:///c:/xampp/htdocs/FLUTTER/UDB/udb_3/maestro/payment/PAY_01_pembayaran_tunai.yaml)<br>[`maestro/products/PRD_01_tambah_produk.yaml`](file:///c:/xampp/htdocs/FLUTTER/UDB/udb_3/maestro/products/PRD_01_tambah_produk.yaml)<br>[`maestro/POS_FULL_E2E.yaml`](file:///c:/xampp/htdocs/FLUTTER/UDB/udb_3/maestro/POS_FULL_E2E.yaml) | **Full E2E Transaksi**: Tambah 3 produk berbeda, bayar tunai Rp 100k, validasi box kembalian, ganti ukuran struk 58mm/80mm, cetak nota.<br>**CRUD**: Input form tambah produk baru, validasi produk muncul di katalog. Dilengkapi `takeScreenshot`. |
-| 4 | **Validasi Kesalahan** | AUTH-04 Form & Credential Error | [`maestro/auth/AUTH_04_validasi_error.yaml`](file:///c:/xampp/htdocs/FLUTTER/UDB/udb_3/maestro/auth/AUTH_04_validasi_error.yaml) | Menguji form login kosong, format email tanpa `@`, password < 6 karakter, dan login gagal dengan password salah. Dilengkapi assertion pesan error & `takeScreenshot`. |
+| No | Pilar Pengujian UTS | File Flow Maestro | Deskripsi Alur Pengujian | Keterangan Verifikasi (Assertion & Evidence) |
+|:--:|:--------------------|:-------------------|:--------------------------|:---------------------------------------------|
+| 1 | **Autentikasi & Validasi Error** | [`maestro/AUTH_LENGKAP.yaml`](file:///c:/xampp/htdocs/FLUTTER/UDB/udb_3/maestro/AUTH_LENGKAP.yaml) | • Validasi form login kosong<br>• Validasi login akun tidak terdaftar<br>• Validasi form pendaftaran kosong & format email tidak valid (`@`)<br>• Pendaftaran akun kasir baru unik (`kasir<timestamp>@test.com`)<br>• Logout akun kasir<br>• Login kembali menggunakan akun baru terdaftar | Dilengkapi assertion pesan validasi error, transisi screen, notifikasi berhasil, dan bukti tangkapan layar otomatis (`auth_01` s/d `auth_08`). |
+| 2 | **Navigasi Antar Menu Aplikasi** | [`maestro/navigation_pos.yaml`](file:///c:/xampp/htdocs/FLUTTER/UDB/udb_3/maestro/navigation_pos.yaml) | • Berpindah secara sekuensial ke **Tab POS** (Katalog)<br>• Berpindah ke **Tab Produk** (Katalog & Stok)<br>• Berpindah ke **Tab Laporan** (KPI & Ringkasan Penjualan)<br>• Berpindah ke **Tab Akun** (Profil Kasir)<br>• Berpindah kembali ke **Tab POS** | Verifikasi perubahan header & konten spesifik tiap tab aktif, validasi visibilitas tombol aksi, dan screenshot otomatis (`nav_1_pos` s/d `nav_5_kembali_pos`). |
+| 3 | **CRUD Manajemen Produk** | [`maestro/CRUD_PRODUCT.yaml`](file:///c:/xampp/htdocs/FLUTTER/UDB/udb_3/maestro/CRUD_PRODUCT.yaml) | • **Create**: Tambah produk "Milo Dinosaur", pilih kategori, input harga awal (Rp 15.000) & stok awal (50), upload foto dari galeri (grid kiri atas)<br>• **Read**: Cari produk lewat kolom search dan verifikasi stok awal<br>• **Update**: Klik icon pensil edit produk, ubah harga baru (Rp 25.000), ubah stok baru (75), ganti foto dari galeri ke grid tengah, simpan perubahan<br>• **Delete**: Klik icon tong sampah, konfirmasi dialog hapus, dan verifikasi produk terhapus | Assertion `Stok: 50` saat create, assertion `Stok: 75` pasca update, dan `assertNotVisible` setelah produk dihapus. Dilengkapi screenshot `crud_product_selesai.png`. |
+| 4 | **Alur Transaksi Kasir POS E2E** | [`maestro/POS_FULL_E2E.yaml`](file:///c:/xampp/htdocs/FLUTTER/UDB/udb_3/maestro/POS_FULL_E2E.yaml) | • Pilih 3 produk berbeda dari katalog POS<br>• Buka panel keranjang belanja<br>• Input nama pelanggan "Kak Afif Adam"<br>• Tambah kuantitas produk (+1 qty)<br>• Buka dialog pembayaran tunai<br>• Input nominal uang diterima via tombol Numpad (Rp 150.000)<br>• Verifikasi nominal kembalian otomatis<br>• Selesaikan transaksi pembayaran tunai<br>• Tampilkan modal cetak nota / struk dan tutup selesai<br>• Verifikasi transaksi tercatat di modul Laporan | Assertion nominal total tagihan, validasi dialog pembayaran tunai, deteksi otomatis popup struk belanja, dan bukti transaksi masuk laporan. |
 
 ### Struktur Direktori Folder `maestro/`
 ```text
 maestro/
-├── POS_FULL_E2E.yaml                     # [MASTER E2E] Alur lengkap 3 produk, kembalian, cetak struk
-├── run_all_uat.yaml                      # Master Suite untuk menjalankan seluruh pengujian
-├── common/                               # Subflow Reusable
-│   ├── launch_app.yaml                   # Buka aplikasi & tunggu splash
-│   └── ensure_logged_in.yaml             # Verifikasi kondisi login kasir
-├── auth/                                 # Modul Autentikasi
-│   ├── AUTH_01_splash_screen.yaml        # [Wajib] Pembukaan aplikasi
-│   ├── AUTH_02_register_toko.yaml        # Pendaftaran akun toko
-│   ├── AUTH_03_login_kasir.yaml          # Login kasir sukses
-│   └── AUTH_04_validasi_error.yaml       # [Wajib] Validasi kesalahan input & form
-├── navigation/                           # Modul Navigasi
-│   └── NAV_01_navigation_bar.yaml        # [Wajib] Alur navigasi antar menu
-├── payment/                              # Modul Pembayaran / Transaksi
-│   ├── PAY_01_pembayaran_tunai.yaml      # [Wajib] Alur transaksi pembayaran tunai
-│   ├── PAY_02_pembayaran_non_tunai.yaml  # Alur transaksi QRIS / non-tunai
-│   └── PAY_03_transaksi_full_e2e.yaml    # Alur E2E transaksi tunai lengkap
-├── products/                             # Modul Produk (CRUD)
-│   ├── PRD_01_tambah_produk.yaml         # [Wajib] Alur CRUD tambah produk baru
-│   └── PRD_02_edit_hapus_produk.yaml     # Alur edit dan hapus produk
-├── pos/                                  # Modul Point of Sale
-│   ├── POS_01_katalog_filter.yaml        # Pencarian dan filter kategori
-│   ├── POS_02_keranjang_belanja.yaml     # Operasi keranjang (+/- qty)
-│   ├── POS_03_open_nota_hold.yaml        # Simpan nota sementara (Hold)
-│   └── POS_04_open_nota_retrieve.yaml    # Muat nota terbuka (Retrieve)
-├── print/                                # Modul Struk ESC/POS
-│   ├── PRT_01_cetak_struk.yaml           # Cetak struk printer Bluetooth 58/80mm
-│   └── PRT_02_reprint_struk.yaml         # Cetak ulang struk dari riwayat
-├── reports/                              # Modul Laporan
-│   ├── REP_01_laporan_penjualan.yaml     # KPI omset & filter waktu
-│   └── REP_02_riwayat_transaksi.yaml     # Riwayat transaksi completed
-├── responsive/                           # Modul Responsive Layout
-│   ├── RESP_01_mobile_portrait.yaml      # Layout Smartphone
-│   └── RESP_02_tablet_landscape.yaml     # Layout Tablet Split-Screen
-└── screenshots/                          # Folder tangkapan layar otomatis Maestro
-    └── .gitkeep
+├── AUTH_LENGKAP.yaml                  # [1] Pengujian Auth Lengkap: Register, Validasi Error, Login & Logout
+├── navigation_pos.yaml                # [2] Pengujian Navigasi: Pindah antar Tab (POS, Produk, Laporan, Akun)
+├── CRUD_PRODUCT.yaml                  # [3] Pengujian CRUD Produk: Tambah, Cari, Edit (Harga, Stok, Foto), Hapus
+├── POS_FULL_E2E.yaml                  # [4] Pengujian Transaksi E2E: 3 Produk, Qty +1, Bayar Tunai, Kembalian, Struk
+├── run_all_uat.yaml                   # Master Suite pelaksana seluruh skenario modular
+├── common/                            # Subflow Reusable (launch_app, ensure_logged_in)
+├── auth/                              # Flow modular autentikasi (Splash, Register, Login, Validasi)
+├── navigation/                        # Flow modular navigasi bar
+├── products/                          # Flow modular produk katalog
+├── pos/                               # Flow modular keranjang & open nota
+├── payment/                           # Flow modular pembayaran tunai & non-tunai
+├── print/                             # Flow modular cetak struk Bluetooth
+├── reports/                           # Flow modular laporan penjualan
+├── responsive/                        # Flow modular layout ponsel vs tablet
+└── screenshots/                       # Direktori hasil tangkapan layar otomatis Maestro
 ```
 
 ---
@@ -154,32 +134,28 @@ maestro/
    flutter run
    ```
 
-### C. Menjalankan Automate Testing Maestro
-1. **Menjalankan Master E2E Transaksi Lengkap (3 Produk + Kembalian + Cetak Struk)**:
-   ```powershell
-   maestro test maestro/POS_FULL_E2E.yaml
-   ```
+### C. Menjalankan Automate Testing Maestro (4 File Utama)
 
-2. **Menjalankan 4 Flow Utama Ketentuan UTS**:
-   ```powershell
-   # 1. Pembukaan Aplikasi (Splash Screen)
-   maestro test maestro/auth/AUTH_01_splash_screen.yaml
+Untuk menjalankan pengujian otomatis Maestro sesuai 4 skenario utama UTS, jalankan perintah berikut dari root folder proyek:
 
-   # 2. Navigasi Aplikasi (Bottom Nav)
-   maestro test maestro/navigation/NAV_01_navigation_bar.yaml
+```powershell
+# 1. Pengujian Autentikasi Lengkap (Register + Login + Validasi Error + Logout)
+maestro test maestro/AUTH_LENGKAP.yaml
 
-   # 3. Alur Transaksi & CRUD Produk
-   maestro test maestro/payment/PAY_01_pembayaran_tunai.yaml
-   maestro test maestro/products/PRD_01_tambah_produk.yaml
+# 2. Pengujian Navigasi Antar Tab (POS -> Produk -> Laporan -> Akun -> POS)
+maestro test maestro/navigation_pos.yaml
 
-   # 4. Validasi Kesalahan Form & Password
-   maestro test maestro/auth/AUTH_04_validasi_error.yaml
-   ```
+# 3. Pengujian CRUD Produk Lengkap (Create -> Read -> Update Harga/Stok/Foto -> Delete)
+maestro test maestro/CRUD_PRODUCT.yaml
 
-3. **Menjalankan Seluruh 20+ Skenario Sekaligus**:
-   ```powershell
-   maestro test maestro/run_all_uat.yaml
-   ```
+# 4. Pengujian Transaksi POS Full End-to-End (3 Produk -> Qty -> Numpad 150rb -> Kembalian -> Struk)
+maestro test maestro/POS_FULL_E2E.yaml
+```
+
+> **Tips Pengujian Sekaligus**: Untuk menjalankan seluruh suite modular sekaligus secara berurutan, gunakan:
+> ```powershell
+> maestro test maestro/run_all_uat.yaml
+> ```
 
 ---
 

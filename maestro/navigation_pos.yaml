@@ -1,0 +1,79 @@
+appId: com.smartpos.smart_pos
+name: Navigasi Antar Tab
+tags:
+  - navigasi
+env:
+  EMAIL: kasir1794230901920@test.com
+  PASSWORD: Uji12345!
+---
+
+- launchApp:
+    clearState: false
+
+- extendedWaitUntil:
+    visible: ".*(Masuk Sekarang|POS|Produk|Laporan|Akun).*"
+    timeout: 15000
+
+- runFlow:
+    when:
+      visible: "Masuk Sekarang"
+    commands:
+      - tapOn:
+          below: "Alamat Email"
+      - eraseText: 50
+      - inputText: ${EMAIL}
+      - hideKeyboard
+      - tapOn:
+          below: "Kata Sandi"
+      - eraseText: 50
+      - inputText: ${PASSWORD}
+      - hideKeyboard
+      - tapOn: "Masuk Sekarang"
+
+- extendedWaitUntil:
+    visible: "Produk.*"
+    timeout: 15000
+
+
+# ---------- 1. TAB POS ----------
+- tapOn:
+    point: "12%,95%"
+- waitForAnimationToEnd:
+    timeout: 1500
+- assertVisible: ".*(Keranjang|Semua|Cari produk).*"
+- assertNotVisible: "Produk & Stok"
+- takeScreenshot: "maestro/screenshots/nav_1_pos"
+
+# ---------- 2. TAB PRODUK ----------
+- tapOn:
+    point: "37%,95%"
+- extendedWaitUntil:
+    visible: "Produk & Stok"
+    timeout: 10000
+- assertVisible: "Produk & Stok"
+- assertVisible: ".*Tambah.*"
+- takeScreenshot: "maestro/screenshots/nav_2_produk"
+
+# ---------- 3. TAB LAPORAN ----------
+- tapOn:
+    point: "62%,95%"
+- waitForAnimationToEnd:
+    timeout: 1500
+- assertNotVisible: "Produk & Stok"
+- assertVisible: ".*(Laporan Penjualan|Laporan|Pendapatan|Total Penjualan|Transaksi).*"
+- takeScreenshot: "maestro/screenshots/nav_3_laporan"
+
+# ---------- 4. TAB AKUN ----------
+- tapOn:
+    point: "87%,95%"
+- waitForAnimationToEnd:
+    timeout: 1500
+- assertVisible: ".*(Keluar|Logout|Profil|Pengaturan|Email).*"
+- takeScreenshot: "maestro/screenshots/nav_4_akun"
+
+- tapOn:
+    point: "12%,95%"
+- waitForAnimationToEnd:
+    timeout: 1500
+- assertVisible: ".*(Keranjang|Semua|Cari produk).*"
+- takeScreenshot: "maestro/screenshots/nav_5_kembali_pos"
