@@ -12,7 +12,7 @@
 ## 👤 Informasi Mahasiswa & Proyek
 
 | Informasi | Keterangan |
-| :--- | :--- |nah 
+| :--- | :--- |
 | **Mata Kuliah** | Mobile Testing |
 | **Dosen Pengampu** | Triyono M.Kom |
 | **Program Studi** | S1 Teknik Informatika |
